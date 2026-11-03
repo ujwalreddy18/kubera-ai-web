@@ -49,3 +49,10 @@ export const statusTone = (status) => {
   if (['failed', 'error', 'cancelled', 'offline'].includes(status)) return 'danger';
   return 'neutral';
 };
+
+export const formatFileSize = (bytes) => {
+  const num = Number(bytes) || 0;
+  if (num < 1024) return `${num} B`;
+  if (num < 1024 * 1024) return `${(num / 1024).toFixed(1)} KB`;
+  return `${(num / (1024 * 1024)).toFixed(1)} MB`;
+};

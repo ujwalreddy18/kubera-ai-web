@@ -3,7 +3,7 @@ import { createServer, request as proxyRequest } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
 
 const root = resolve(process.cwd(), 'src');
-const port = Number(process.env.PORT || process.argv[2] || 4173);
+const port = Number(process.env.PORT || process.argv[2] || 3000);
 const types = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',

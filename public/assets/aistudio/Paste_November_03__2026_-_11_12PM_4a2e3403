@@ -1,0 +1,1277 @@
+# KUBERA AI — MASTER FRONTEND DEVELOPMENT SUPER PROMPT
+
+## ROLE
+
+Act as a Senior Frontend Engineer, Principal UI/UX Designer, Motion Designer, and SaaS Product Architect.
+
+Your task is to upgrade and complete my existing application into a premium, production-quality desktop business operations platform named **KUBERA AI**.
+
+Do not create a separate project or a duplicate application.
+
+**IMPORTANT: Work directly on the existing imported GitHub project. Preserve all existing working functionality, backend integrations, API endpoints, database structures, authentication, environment variables, and project configuration.**
+
+First inspect the complete existing codebase, understand its architecture, identify the current features, and then implement the improvements directly in the existing project.
+
+Do not merely provide suggestions, plans, screenshots, or mockups. Implement the actual frontend UI, interactions, components, animations, responsive layouts, and functionality in the codebase.
+
+---
+
+# 1. PRODUCT IDENTITY
+
+Product: KUBERA AI
+
+Tagline: Your Self-Managing Digital Workforce
+
+Product description:
+
+KUBERA AI is a local-first business operations platform powered by controlled AI agents that collaborate to execute business missions, analyze information, and generate real professional Office files.
+
+Core capabilities:
+- AI-powered business mission execution
+- Controlled multi-agent workforce
+- Voice-based mission commands
+- Image, document, and file attachments
+- Local workspace file access
+- PPTX generation
+- DOCX generation
+- XLSX generation
+- Report management
+- Business records and project management
+- Secure administration
+- Source-linked results
+- Transparent execution history
+
+Design inspiration:
+Linear, Notion, Attio, Vercel, Raycast, and premium fintech dashboards.
+
+The interface must feel like a real enterprise desktop application, not a generic AI chatbot.
+
+---
+
+# 2. TECHNOLOGY AND IMPLEMENTATION RULES
+
+Before modifying anything:
+
+1. Inspect the existing package.json.
+2. Identify the framework, language, UI library, routing, state management, and styling system.
+3. Inspect all existing pages, components, APIs, and backend connections.
+4. Identify the existing authentication flow.
+5. Identify existing mission execution and file generation functionality.
+6. Preserve existing architecture wherever practical.
+7. Reuse installed libraries whenever possible.
+8. Avoid unnecessary dependencies.
+9. Never replace working functionality with fake mock implementations.
+10. Never hardcode fake API success responses.
+11. Never expose API keys, secrets, or credentials in frontend code.
+12. Do not delete existing features without a valid reason.
+
+If a feature requires backend support, implement the frontend integration properly and clearly identify the missing backend capability.
+
+Do not stop after creating the landing page. Complete the entire application experience.
+
+---
+
+# 3. DESIGN SYSTEM
+
+Create a centralized design system with reusable components, design tokens, spacing, typography, colors, shadows, borders, and motion rules.
+
+## Light Mode
+
+Background: #F8FAFC
+Surface: #FFFFFF
+Primary Text: #0F172A
+Secondary Text: #64748B
+Primary Accent: #2563EB
+Border: #E2E8F0
+Success: #059669
+Warning: #D97706
+Danger: #DC2626
+
+## Dark Mode
+
+Background: #0B1120
+Surface: #111827
+Primary Text: #F8FAFC
+Secondary Text: #94A3B8
+Primary Accent: #3B82F6
+Border: #1E293B
+Success: #10B981
+Warning: #F59E0B
+Danger: #EF4444
+
+## Typography
+
+Use Inter or Plus Jakarta Sans.
+
+Typography must be:
+- Professional
+- Modern
+- Consistent
+- Highly readable
+- Carefully balanced
+
+## Visual Styling
+
+- Rounded corners: 10–12px
+- Soft shadows
+- Subtle borders
+- Clean layouts
+- Consistent spacing
+- Minimal gradients
+- No excessive glassmorphism
+- No neon colors
+- No flashy AI effects
+- No unnecessary decoration
+- No emoji-based interface icons
+
+Use Lucide icons or the existing icon library.
+
+Build reusable components such as:
+
+- Button
+- IconButton
+- Input
+- Textarea
+- Select
+- Dropdown
+- Tooltip
+- Modal
+- Drawer
+- Toast
+- Badge
+- Avatar
+- Card
+- Table
+- Tabs
+- Skeleton
+- ProgressIndicator
+- EmptyState
+- FileAttachment
+- VoiceCommandButton
+- ThemeToggle
+- Sidebar
+- PageHeader
+
+All components must support both light and dark themes.
+
+---
+
+# 4. COMPLETE APPLICATION EXPERIENCES
+
+Implement the following complete experiences.
+
+## A. LANDING PAGE
+
+Create a premium marketing landing page.
+
+### Navbar
+- KUBERA AI logo
+- Product
+- Features
+- Security
+- About
+- Sign In
+- Get Started
+
+### Hero Section
+
+Headline:
+
+"Your Business. Your AI Workforce."
+
+Supporting text:
+
+"Deploy intelligent agents to execute business missions, analyze information, and create professional reports — all from one secure workspace."
+
+Primary CTA:
+"Start New Mission"
+
+Secondary CTA:
+"Explore the Platform"
+
+Hero illustration:
+- Abstract connected AI agents
+- Professional document cards
+- PPTX/DOCX/XLSX floating elements
+- Subtle network connections
+- Refined geometric shapes
+- Premium blue gradients
+
+### Feature Cards
+
+Create professional cards for:
+
+1. AI Mission Execution
+2. Intelligent Workforce
+3. Real Office File Generation
+4. Voice-Driven Operations
+5. Secure Local Workspace
+6. Business Records
+
+### Trust Section
+
+Include:
+
+- Local-first architecture
+- Privacy-focused operations
+- Source-linked outputs
+- Controlled AI agents
+- Real Office file generation
+
+### Footer
+
+Include product links, security, documentation, and copyright.
+
+Create both Light Mode and Dark Mode.
+
+---
+
+# 5. LOGIN EXPERIENCES
+
+## User Login
+
+Create a welcoming, premium login interface.
+
+Heading:
+
+"Welcome back."
+
+Subheading:
+
+"Sign in to your KUBERA workspace."
+
+Fields:
+- Email
+- Password
+- Show/hide password
+- Remember me
+- Forgot password
+- Sign in
+
+Additional options:
+- Continue with local workspace
+- Create account, if supported
+
+Include a subtle AI workforce illustration.
+
+## Admin Login
+
+Create a separate secure admin login experience.
+
+Heading:
+
+"Admin Access"
+
+Subheading:
+
+"Secure access to KUBERA system administration."
+
+Include:
+- Email
+- Password
+- Secure authentication messaging
+- Security status
+- Login button
+- Password visibility toggle
+
+Use a more serious enterprise aesthetic.
+
+Dark Mode should be the default visual treatment, but support Light Mode.
+
+Preserve existing authentication behavior.
+
+---
+
+# 6. MAIN USER PORTAL
+
+Create a desktop-first application shell.
+
+## Sidebar
+
+Collapsible sidebar with:
+
+- KUBERA AI logo
+- Workspace selector
+- Overview
+- Missions
+- Workforce
+- Report Center
+- Records
+- Clients
+- Projects
+- Settings
+- Help
+- User profile
+
+Add:
+- Smooth sidebar collapse
+- Tooltips when collapsed
+- Active navigation indicators
+- Subtle hover effects
+
+## Top Navigation
+
+Include:
+
+- Breadcrumbs
+- Global search
+- Mission activity indicator
+- Notifications
+- Theme toggle
+- User profile
+- "New Mission" primary button
+
+## Dashboard
+
+Create a professional dashboard with:
+
+- Welcome message
+- Active missions
+- Completed missions
+- Generated reports
+- Workforce status
+- Recent activity
+- Quick actions
+- Recent documents
+- Mission performance summary
+
+Use realistic visual hierarchy.
+
+---
+
+# 7. MISSION CENTER — MOST IMPORTANT FEATURE
+
+Create a premium mission execution interface.
+
+The central experience should feel like an intelligent business command center.
+
+## Mission Composer
+
+Create a large mission input component with:
+
+- Multiline mission textarea
+- Voice command button
+- File attachment button
+- Image attachment button
+- Document attachment button
+- Drag-and-drop support
+- Send / Deploy Mission button
+- Attachment preview
+- Clear attachments
+- Remove individual attachments
+
+Placeholder:
+
+"Describe what you want your AI workforce to accomplish..."
+
+Example:
+
+"Analyze these sales reports and create a PowerPoint presentation summarizing revenue growth, customer trends, and recommendations."
+
+## Mission Input Toolbar
+
+Design a polished toolbar:
+
+[ + Attach ] [ Microphone ] [ Workspace ] [ Deploy Mission ]
+
+The toolbar must be intuitive, compact, and professional.
+
+## Mission Status
+
+Display:
+
+- Draft
+- Ready
+- Running
+- Waiting for approval
+- Completed
+- Failed
+
+Use status icons, labels, and colors.
+
+## Mission History
+
+Display previous missions with:
+
+- Mission name
+- Date
+- Status
+- Assigned agents
+- Generated files
+- Execution duration
+
+Allow opening mission details.
+
+---
+
+# 8. VOICE COMMAND SYSTEM
+
+Implement a functional voice command interface.
+
+## User Experience
+
+Users should be able to:
+
+1. Click the microphone icon.
+2. Speak their business task.
+3. See their spoken words converted into text.
+4. Edit the transcription.
+5. Attach relevant files.
+6. Submit the mission.
+
+## Voice Button States
+
+Implement these states:
+
+- Idle
+- Listening
+- Processing
+- Transcription ready
+- Error
+- Permission denied
+
+## Voice Interaction
+
+Use the browser Web Speech API where supported.
+
+Implement:
+- SpeechRecognition / webkitSpeechRecognition
+- Continuous listening only when appropriate
+- Interim transcription
+- Final transcription
+- Stop listening
+- Cancel recording
+- Clear transcription
+- Language selection
+- Microphone permission handling
+- Browser compatibility handling
+- Error messages
+- Graceful fallback when speech recognition is unavailable
+
+The voice button should have a subtle animated listening indicator.
+
+When listening:
+- Show a refined waveform or audio level indicator.
+- Display "Listening..."
+- Show live transcription in the mission textarea.
+- Provide a clear stop button.
+
+IMPORTANT:
+
+Do not claim microphone support if the browser does not support it.
+
+Do not automatically execute a mission immediately after speech transcription.
+
+The user must review and confirm the mission before deployment.
+
+---
+
+# 9. DEVICE FILE SHARING AND ATTACHMENTS
+
+Implement a complete professional file-sharing and attachment experience.
+
+This is a critical feature.
+
+Users must be able to share files directly from their device with KUBERA AI.
+
+## Supported Attachments
+
+- PDF
+- DOCX
+- DOC
+- PPTX
+- PPT
+- XLSX
+- XLS
+- CSV
+- TXT
+- PNG
+- JPG
+- JPEG
+- WEBP
+- Other explicitly supported formats
+
+## File Selection
+
+Implement:
+
+- Native device file picker
+- Multiple file selection
+- Drag and drop
+- Paste images from clipboard when supported
+- Image attachment
+- Document attachment
+- File attachment preview
+- File removal
+- Upload progress
+- File validation
+- File size validation
+- Duplicate detection
+- Unsupported file warnings
+
+Use a native file input.
+
+Example behavior:
+
+Click "Attach Files" → Open the device file picker → Select files → Show attachment previews → Submit mission with selected attachments.
+
+## Attachment UI
+
+Create premium attachment cards.
+
+Each card should display:
+
+- File type icon
+- File name
+- File size
+- File type
+- Upload status
+- Remove button
+
+For images:
+- Show thumbnail preview.
+- Open image preview modal.
+- Allow removing the image.
+
+For documents:
+- Show a document icon.
+- Show filename and file size.
+- Show upload progress.
+
+## Drag-and-Drop
+
+Allow users to drag files from their desktop directly into the mission composer.
+
+Implement:
+- Drag-over visual state
+- Drop-zone overlay
+- File validation
+- Multiple files
+- Error handling
+- Smooth transition when attachments are added
+
+## Clipboard Image Support
+
+Allow pasting screenshots or images into the mission composer using Ctrl+V where supported.
+
+Display the pasted image as an attachment preview.
+
+## Device File Access
+
+Use browser-safe APIs.
+
+Do not attempt unrestricted filesystem access.
+
+Use:
+- HTML file input
+- File API
+- DataTransfer
+- Clipboard API where supported
+- File System Access API only when available and explicitly supported
+
+Do not falsely claim access to arbitrary folders or files.
+
+---
+
+# 10. ATTACHMENT BACKEND INTEGRATION
+
+Connect the attachment system to the existing backend and mission execution pipeline.
+
+Requirements:
+
+- Preserve actual file bytes.
+- Preserve file names.
+- Preserve MIME types.
+- Support multipart/form-data when required by existing backend APIs.
+- Pass attachments into the mission execution request.
+- Handle file upload progress.
+- Handle upload errors.
+- Handle mission submission errors.
+- Display accurate status.
+- Do not silently discard attachments.
+
+If the backend does not support attachments:
+
+- Build the complete frontend attachment UI.
+- Implement a clearly separated upload service abstraction.
+- Document the missing backend endpoint or capability.
+- Do not fake successful uploads.
+- Do not report a mission as using files that were never transmitted.
+
+Use the existing API architecture wherever possible.
+
+---
+
+# 11. WORKFORCE CENTER
+
+Create a beautiful multi-agent workforce visualization.
+
+Agent cards:
+
+## Manager
+Responsibilities:
+- Mission planning
+- Task distribution
+- Coordination
+
+## Analyst
+Responsibilities:
+- Data analysis
+- Research
+- Information extraction
+
+## Document Worker
+Responsibilities:
+- PPTX generation
+- DOCX generation
+- XLSX generation
+
+## Reviewer
+Responsibilities:
+- Quality checks
+- Validation
+- Source verification
+
+Each agent card includes:
+
+- Professional avatar
+- Agent name
+- Role
+- Status
+- Current task
+- Progress
+- Last activity
+
+## Agent Workflow
+
+Visualize the flow:
+
+Manager → Analyst → Document Worker → Reviewer → Final Output
+
+Include:
+- Connecting lines
+- Subtle animated progress indicators
+- Task handoffs
+- Status transitions
+- Completed states
+- Waiting states
+- Error states
+
+Use smooth, professional animations.
+
+Do not make agents look cartoonish.
+
+---
+
+# 12. REPORT CENTER
+
+Create a premium document management experience.
+
+Report types:
+
+- PowerPoint
+- Word
+- Excel
+- PDF
+- CSV
+
+## Report Cards
+
+Display:
+
+- File icon
+- Report name
+- Format
+- Generated date
+- Mission source
+- File size
+- Status
+- Download action
+- Open action
+- More options
+
+## Filters
+
+- All Reports
+- Presentations
+- Documents
+- Spreadsheets
+- Recent
+- Completed
+- Failed
+
+## Search
+
+Implement report search and filtering.
+
+## Download
+
+Connect download actions to real generated files.
+
+Do not create fake downloadable files.
+
+## Report Generation Progress
+
+Display:
+- Current agent
+- Current operation
+- Progress
+- Status
+- Completion indicator
+
+Use elegant progress animations.
+
+---
+
+# 13. RECORDS CENTER
+
+Create professional business records management.
+
+Sections:
+- Clients
+- Projects
+- Documents
+- Mission records
+
+## Client Table
+
+Columns:
+- Client
+- Company
+- Email
+- Projects
+- Status
+- Last activity
+
+## Project Table
+
+Columns:
+- Project name
+- Client
+- Owner
+- Status
+- Progress
+- Updated date
+
+Implement:
+- Search
+- Sorting
+- Filtering
+- Pagination
+- Row actions
+- Details drawer
+- Create/edit forms where supported
+
+Use the existing backend data.
+
+---
+
+# 14. ADMIN PORTAL
+
+Create a separate enterprise administration experience.
+
+Sidebar sections:
+
+1. Overview
+2. Users & Workspaces
+3. Agent Configuration
+4. Template Library
+5. Model Settings
+6. Audit Logs
+7. System Health
+8. Security
+9. Settings
+
+## Admin Dashboard
+
+Display:
+
+- Total users
+- Active workspaces
+- Running missions
+- Completed missions
+- System health
+- Agent availability
+- Resource utilization
+- Recent audit events
+
+## Users & Workspaces
+
+Create:
+- User management table
+- Workspace management
+- Role management
+- User status
+- Search and filtering
+- User details drawer
+
+## Agent Configuration
+
+Display:
+- Agent name
+- Role
+- Configuration
+- Status
+- Model
+- Capabilities
+
+## Template Library
+
+Manage:
+- PPTX templates
+- DOCX templates
+- XLSX templates
+
+## Model Settings
+
+Provide configuration UI for:
+- Model provider
+- Model selection
+- Temperature where supported
+- Token limits where supported
+- Local model configuration where supported
+
+Never expose API secrets.
+
+## Audit Logs
+
+Create:
+- Searchable audit table
+- User
+- Action
+- Resource
+- Timestamp
+- Severity
+- Details
+
+## System Health
+
+Display:
+- Backend connectivity
+- Database connectivity
+- Agent health
+- File generation status
+- Error metrics
+- System resource indicators
+
+Only display real system data when available.
+
+---
+
+# 15. LIGHT MODE AND DARK MODE
+
+Implement a complete theme system.
+
+Requirements:
+
+- Light mode
+- Dark mode
+- System mode if supported
+- Theme persistence
+- Smooth theme transitions
+- Consistent component styling
+- Correct contrast
+- Accessible focus states
+
+Use centralized CSS variables or the existing theme architecture.
+
+Every page, modal, dropdown, tooltip, table, input, sidebar, and attachment component must support both themes.
+
+No white components in dark mode unless intentionally designed.
+
+No dark text on dark backgrounds.
+
+No inconsistent borders.
+
+---
+
+# 16. ANIMATIONS AND MICRO-INTERACTIONS
+
+Implement professional motion design.
+
+Use Framer Motion if already installed or add it only if appropriate.
+
+## Global Animations
+
+- Page transitions: fade + slight vertical movement
+- Card hover: subtle lift
+- Button press: scale to 0.98
+- Modal: fade + scale
+- Dropdown: fade + slight movement
+- Sidebar: smooth width transition
+- Toast: slide + fade
+- Theme transition: smooth color changes
+
+## Mission Animations
+
+- Mission deployment: sequential agent activation
+- Agent handoff: subtle progress pulse
+- Status changes: smooth badge transitions
+- Completion: gentle checkmark animation
+- Error: subtle warning transition
+
+## Voice Animations
+
+- Microphone listening pulse
+- Subtle waveform
+- Smooth recording state transitions
+- Clear visual indication of recording
+
+## File Upload Animations
+
+- Drag-and-drop overlay
+- Attachment card entrance
+- Upload progress
+- Upload success indicator
+- Removal animation
+
+## Report Generation
+
+- Progress bar
+- Circular progress
+- Agent activity indicator
+- Completion checkmark
+
+## Performance
+
+Animations should:
+- Last approximately 150–300ms
+- Use transform and opacity when possible
+- Avoid unnecessary re-renders
+- Respect prefers-reduced-motion
+- Never block interactions
+
+Avoid:
+- Bouncing animations
+- Flashing effects
+- Excessive particles
+- Constant distracting movement
+- Neon glows
+
+---
+
+# 17. EMPTY STATES AND ILLUSTRATIONS
+
+Create premium empty states for:
+
+- No missions
+- No reports
+- No records
+- No clients
+- No projects
+- No active agents
+- No search results
+
+Illustration style:
+
+- Minimal geometric
+- Refined line illustrations
+- Soft blue accents
+- Professional business aesthetic
+
+Include clear action buttons.
+
+Example:
+
+"No missions yet"
+
+"Create your first mission and let your AI workforce handle the execution."
+
+Button: "Start New Mission"
+
+---
+
+# 18. SEARCH AND COMMAND EXPERIENCE
+
+Implement a global search experience.
+
+Search:
+- Missions
+- Reports
+- Clients
+- Projects
+- Records
+
+Include:
+- Keyboard shortcut Ctrl+K
+- Search modal
+- Search suggestions
+- Recent items
+- Keyboard navigation
+- Escape to close
+
+If the project supports command palettes, integrate with the existing implementation.
+
+---
+
+# 19. RESPONSIVE AND DESKTOP EXPERIENCE
+
+Primary target:
+- 1440px
+- 1600px
+- 1920px
+
+Also ensure usability at:
+- 1280px
+- 1024px
+- Tablet
+- Mobile
+
+Desktop should receive the highest design priority.
+
+At smaller widths:
+- Sidebar should collapse or become a drawer.
+- Tables should remain usable.
+- Mission composer should adapt.
+- Attachments should wrap correctly.
+- Navigation should remain accessible.
+
+---
+
+# 20. ACCESSIBILITY
+
+Implement:
+- Semantic HTML
+- Keyboard navigation
+- Accessible labels
+- ARIA attributes where necessary
+- Visible focus rings
+- Sufficient contrast
+- Reduced motion support
+- Accessible modals
+- Accessible dropdowns
+- Screen-reader-friendly statuses
+
+Do not rely only on color to communicate status.
+
+---
+
+# 21. FUNCTIONAL REQUIREMENTS
+
+All visible controls must work.
+
+Examples:
+
+- Buttons must perform real actions.
+- Sidebar navigation must work.
+- Theme toggle must work.
+- Search must work.
+- Voice input must work where supported.
+- File picker must open.
+- Attachments must appear.
+- Drag-and-drop must work.
+- Image preview must work.
+- Remove attachment must work.
+- Mission submission must use the actual backend.
+- Reports must download actual generated files.
+- Admin navigation must work.
+- Forms must validate.
+- Toast notifications must display.
+- Loading states must be correct.
+- Error states must be meaningful.
+
+Avoid dead buttons and decorative-only controls.
+
+If a backend action is unavailable, disable the action or clearly explain the limitation.
+
+---
+
+# 22. COMPONENT ARCHITECTURE
+
+Organize the implementation using reusable components.
+
+Suggested architecture, adapting to the existing codebase:
+
+src/
+  components/
+    ui/
+    layout/
+    navigation/
+    mission/
+    voice/
+    attachments/
+    workforce/
+    reports/
+    records/
+    admin/
+    animations/
+  pages/
+    landing/
+    auth/
+    dashboard/
+    missions/
+    workforce/
+    reports/
+    records/
+    admin/
+  hooks/
+    useTheme/
+    useVoiceRecognition/
+    useFileAttachments/
+    useMissionExecution/
+  services/
+    api/
+    upload/
+    mission/
+    reports/
+  styles/
+    tokens/
+    themes/
+  utils/
+
+Do not force this structure if the project already has a better architecture.
+
+---
+
+# 23. PERFORMANCE AND CODE QUALITY
+
+Requirements:
+
+- Clean TypeScript if the project uses TypeScript.
+- Reusable components.
+- No unnecessary duplication.
+- No huge monolithic components.
+- Proper state management.
+- Proper error handling.
+- Optimized rendering.
+- Lazy loading where appropriate.
+- No unnecessary dependencies.
+- No console errors.
+- No broken imports.
+- No missing assets.
+- No TypeScript errors.
+- No broken routes.
+
+---
+
+# 24. IMPLEMENTATION WORKFLOW
+
+Follow this sequence:
+
+PHASE 1:
+Inspect the existing project and identify its architecture.
+
+PHASE 2:
+Create the design system and theme tokens.
+
+PHASE 3:
+Implement the application shell, sidebar, navigation, and theme toggle.
+
+PHASE 4:
+Implement landing page and login experiences.
+
+PHASE 5:
+Implement dashboard and mission center.
+
+PHASE 6:
+Implement voice commands.
+
+PHASE 7:
+Implement device file attachments, images, documents, drag-and-drop, and clipboard paste.
+
+PHASE 8:
+Integrate mission submission with the existing backend.
+
+PHASE 9:
+Implement workforce visualization.
+
+PHASE 10:
+Implement Report Center.
+
+PHASE 11:
+Implement Records Center.
+
+PHASE 12:
+Implement Admin Portal.
+
+PHASE 13:
+Add animations and micro-interactions.
+
+PHASE 14:
+Test Light Mode and Dark Mode.
+
+PHASE 15:
+Test every major interaction.
+
+PHASE 16:
+Fix bugs, broken layouts, overflow, and errors.
+
+PHASE 17:
+Verify the complete application.
+
+Do not stop after completing one phase.
+
+---
+
+# 25. FINAL QUALITY CHECKLIST
+
+Before declaring the project complete, verify:
+
+- [ ] Existing application functionality is preserved.
+- [ ] Landing page is professional.
+- [ ] User login works.
+- [ ] Admin login works.
+- [ ] Dashboard is complete.
+- [ ] Missions interface is functional.
+- [ ] Voice command button works where supported.
+- [ ] Voice transcription can be reviewed before execution.
+- [ ] Device file picker works.
+- [ ] Multiple file attachments work.
+- [ ] Image attachments work.
+- [ ] Document attachments work.
+- [ ] Drag-and-drop works.
+- [ ] Clipboard image paste works where supported.
+- [ ] Attachment previews work.
+- [ ] File removal works.
+- [ ] Mission submission transmits attachments correctly.
+- [ ] Workforce visualization works.
+- [ ] Report Center works.
+- [ ] Actual files can be downloaded.
+- [ ] Records tables work.
+- [ ] Admin Portal is complete.
+- [ ] Light Mode is polished.
+- [ ] Dark Mode is polished.
+- [ ] Animations are subtle and professional.
+- [ ] Responsive layout works.
+- [ ] Accessibility basics are implemented.
+- [ ] No dead buttons.
+- [ ] No fake backend responses.
+- [ ] No API keys exposed.
+- [ ] No console errors.
+- [ ] No broken imports.
+- [ ] No major layout issues.
+- [ ] Build completes successfully.
+
+---
+
+# 26. FINAL EXECUTION INSTRUCTIONS
+
+Start by inspecting the existing project.
+
+Then implement the improvements directly in the codebase.
+
+Prioritize real functionality, polished design, maintainability, and consistency.
+
+Do not just create a visual mockup.
+
+Do not replace the project with a static landing page.
+
+Do not remove existing business logic.
+
+Do not create fake functionality.
+
+Do not stop at the planning stage.
+
+Complete the implementation, verify the build, and summarize the actual changes.
+
+At the end, report:
+
+1. Features implemented
+2. Files/components created or modified
+3. Voice support status
+4. File attachment integration status
+5. Backend capabilities required
+6. Build/test results
+7. Any remaining limitations
+
+**FINAL GOAL: Transform the existing KUBERA AI project into a premium, functional, production-quality business operations desktop application with an intelligent mission composer, voice commands, device file sharing, image/document attachments, controlled AI workforce visualization, real Office file generation, elegant animations, and flawless Light/Dark Mode.**

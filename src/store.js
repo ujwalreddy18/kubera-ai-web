@@ -5,13 +5,25 @@ export function createStore(seedFactory) {
   const subscribers = new Set();
 
   function load(factory) {
+    const seed = factory();
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...seed,
+          ...parsed,
+          auth: { ...seed.auth, ...(parsed.auth || {}) },
+          ui: { ...seed.ui, ...(parsed.ui || {}) },
+          settings: { ...seed.settings, ...(parsed.settings || {}) },
+          adminSecurity: { ...seed.adminSecurity, ...(parsed.adminSecurity || {}) },
+          adminHealth: { ...seed.adminHealth, ...(parsed.adminHealth || {}) }
+        };
+      }
     } catch (error) {
       console.warn('Unable to restore local prototype state', error);
     }
-    return factory();
+    return seed;
   }
 
   function persist() {

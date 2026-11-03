@@ -80,6 +80,74 @@ export function createSeedState() {
     schedules: [
       { id: 'schedule-monthly-acme', prompt: 'Build the monthly Acme pipeline board deck from current records', type: 'pptx', cron: '0 9 1 * *', timezone: 'Asia/Calcutta', enabled: true, lastRun: ago(43800), nextRun: now + 5 * 24 * 60 * 60_000 }
     ],
+    theme: 'dark',
+    auth: {
+      isAuthenticated: true,
+      user: {
+        id: 'usr-1',
+        name: 'Alex Vance',
+        email: 'alex.vance@kubera.corp',
+        role: 'user',
+        department: 'Operations & Strategy',
+        title: 'Director of Business Operations'
+      }
+    },
+    ui: {
+      sidebarCollapsed: false,
+      commandPaletteOpen: false,
+      missionDraftText: '',
+      missionAttachments: [],
+      voiceListening: false,
+      voiceTranscript: '',
+      recordForm: null,
+      modalReportId: null,
+      deliveryReportId: null,
+      activeRecordsTab: 'clients',
+      activeAdminTab: 'overview',
+      projectFilterStage: 'all',
+      projectSort: 'value-desc',
+      searchTerm: ''
+    },
+    adminUsers: [
+      { id: 'usr-admin', name: 'Devon Vance', email: 'admin@kubera.corp', role: 'admin', title: 'System Administrator', status: 'active', lastActive: ago(4) },
+      { id: 'usr-1', name: 'Alex Vance', email: 'alex.vance@kubera.corp', role: 'user', title: 'Director of Business Operations', status: 'active', lastActive: ago(12) },
+      { id: 'usr-2', name: 'Priya Shah', email: 'priya.shah@kubera.corp', role: 'user', title: 'Lead Account Partner', status: 'active', lastActive: ago(45) },
+      { id: 'usr-3', name: 'Daniel Reed', email: 'daniel.reed@kubera.corp', role: 'user', title: 'Client Director', status: 'active', lastActive: ago(180) }
+    ],
+    adminWorkspaces: [
+      { id: 'ws-main', name: 'Global Enterprise HQ', tier: 'Enterprise Sovereign', maxAgents: 16, missionsRun: 142, storageUsed: '1.8 GB', status: 'active' },
+      { id: 'ws-emea', name: 'EMEA Regional Hub', tier: 'Team Dedicated', maxAgents: 8, missionsRun: 64, storageUsed: '820 MB', status: 'active' }
+    ],
+    adminAgentsConfig: [
+      { agentId: 'agent-manager', name: 'Asha', model: 'local-deterministic', temperature: 0.2, tools: ['task_planning', 'scope_reconciliation'], enabled: true },
+      { agentId: 'agent-market', name: 'Maya', model: 'local-deterministic', temperature: 0.4, tools: ['market_signals', 'crossref_citations'], enabled: true },
+      { agentId: 'agent-worker-1', name: 'W-1', model: 'local-deterministic', temperature: 0.1, tools: ['sqlite_query', 'pipeline_math'], enabled: true },
+      { agentId: 'agent-worker-2', name: 'W-2', model: 'officecli-bridge', temperature: 0.2, tools: ['pptxgen', 'docxgen', 'exceljs'], enabled: true },
+      { agentId: 'agent-reviewer', name: 'Sentinel', model: 'local-deterministic', temperature: 0.0, tools: ['schema_verifier', 'checksum_audit'], enabled: true }
+    ],
+    adminModels: {
+      activeProvider: 'local_deterministic',
+      providers: [
+        { id: 'local_deterministic', name: 'Deterministic Local Workforce', status: 'online', latency: '4ms', cost: '$0.00' },
+        { id: 'opencode_sidecar', name: 'OpenCode Native IPC Sidecar', status: 'ready', latency: '18ms', cost: '$0.00' },
+        { id: 'ollama_local', name: 'Ollama On-Premises (Qwen 2.5 32B)', status: 'standby', latency: '65ms', cost: '$0.00' }
+      ]
+    },
+    adminSecurity: {
+      zeroTelemetry: true,
+      localOnlyStorage: true,
+      egressLockdown: true,
+      requirePeerReview: true,
+      auditLogRetentionDays: 365
+    },
+    adminHealth: {
+      status: 'healthy',
+      cpuUsage: '14%',
+      ramUsage: '482 MB / 8 GB',
+      uptime: '99.98%',
+      ipcSocket: 'connected',
+      sidecarState: 'running'
+    },
     activity: [
       { id: 'audit-1', at: ago(128), kind: 'validate_output', tone: 'success', text: 'Sentinel approved Acme’s PPTX report artifact.' },
       { id: 'audit-2', at: ago(129), kind: 'create_file', tone: 'info', text: 'W-2 created the Q3 pipeline deck in the Report Center.' },

@@ -209,6 +209,7 @@ export function startMission(api, text, source = 'user', options = {}) {
       createdAt: Date.now(),
       updatedAt: Date.now(),
       reportId: null,
+      attachments: Array.isArray(options.attachments) ? options.attachments : [],
       tasks: [{
         id: managerTaskId,
         key: 'manager',
@@ -221,6 +222,9 @@ export function startMission(api, text, source = 'user', options = {}) {
       handoffs: []
     });
     addActivity(next, `Requirement created: “${trimmed}”.`, 'info', 'create_requirement');
+    if (Array.isArray(options.attachments) && options.attachments.length) {
+      addActivity(next, `Attached ${options.attachments.length} device file(s) to mission: ${options.attachments.map((a) => a.name).join(', ')}.`, 'info', 'attach_files');
+    }
     addActivity(next, `Selected ${context.clients.length} client and ${context.projects.length} project record(s) for governed local-agent execution.`, 'neutral', 'query_records');
     if (source === 'schedule') addActivity(next, 'A persisted schedule started this mission.', 'info', 'schedule_fired');
   });
