@@ -91,9 +91,9 @@ function renderHeader(state) {
 
   return `<header class="topbar">
     <div class="brand" data-action="nav" data-route="dashboard">
-      <span class="brand-mark">K</span>
-      <span>KUBERA<b>AI</b></span>
-      <em>Digital Workforce</em>
+      <img src="/assets/aistudio/KUBERA_UPDATING_LOGO_d3167c7e.png" alt="KUBERA" class="brand-logo-img" />
+      <span>KUBERA<span class="brand-dot">.</span></span>
+      <em>FlowSync Ops</em>
     </div>
 
     <div class="topbar-center">
@@ -1157,225 +1157,509 @@ function renderAdminSecurity(state) {
 function renderLanding(state) {
   const isDark = (state.theme || 'dark') === 'dark';
 
-  return `<div class="landing-container">
-    <header class="landing-nav">
-      <div class="brand" data-action="nav" data-route="landing">
-        <span class="brand-mark">K</span>
-        <span>KUBERA<b>AI</b></span>
-        <em>Digital Workforce</em>
+  return `<div class="crave-landing-container" id="top">
+    <!-- Ambient gentle peach/orange gradient circles -->
+    <div class="crave-orb-1" aria-hidden="true"></div>
+    <div class="crave-orb-2" aria-hidden="true"></div>
+    <div class="crave-orb-3" aria-hidden="true"></div>
+
+    <!-- Floating Clean Pill Navigation Bar -->
+    <header class="crave-nav">
+      <div class="crave-brand" data-action="nav" data-route="landing">
+        <img src="/assets/aistudio/KUBERA_UPDATING_LOGO_d3167c7e.png" alt="KUBERA AI" class="crave-logo-img" />
+        <span class="crave-brand-name">KUBERA<span class="crave-dot">.</span></span>
       </div>
 
-      <div class="landing-nav-links">
-        <a href="#features">Product</a>
-        <a href="#workforce">AI Workforce</a>
-        <a href="#workflow">How It Works</a>
-        <a href="#security">Security</a>
-      </div>
+      <nav class="crave-nav-links" aria-label="Main Navigation">
+        <a href="#categories">What You Can Build</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#flowsync-story">Operations Flow</a>
+        <a href="#modules">Three Modules</a>
+        <a href="#benefits">Key Benefits</a>
+      </nav>
 
-      <div style="display:flex; align-items:center; gap:10px;">
-        <button class="theme-toggle-btn" data-action="toggle-theme" title="Toggle theme">
+      <div class="crave-nav-actions">
+        <button class="theme-toggle-btn" data-action="toggle-theme" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
           ${isDark ? '☀️' : '🌙'}
         </button>
-        <button class="secondary-button" data-action="nav" data-route="login">Sign In</button>
-        <button class="primary-button" data-action="nav" data-route="dashboard">Open Workspace →</button>
+        <button class="crave-ghost-btn" data-action="nav" data-route="login">Sign In</button>
+        <button class="crave-ghost-btn" data-action="nav" data-route="dashboard">Try Demo</button>
+        <button class="crave-orange-btn" data-action="nav" data-route="missions">Launch Workspace ➔</button>
       </div>
     </header>
 
-    <section class="landing-hero">
-      <span class="hero-badge">INTELLIGENT BUSINESS OPERATIONS</span>
-      <h1 class="hero-headline">
-        Your Business.<br>
-        <span class="highlight">Your AI Workforce.</span>
-      </h1>
-      <p class="hero-subhead">
-        Delegate business operations to intelligent AI agents that plan, analyze, execute, and deliver professional results — generating real PowerPoint, Word, and Excel files.
-      </p>
+    <!-- HERO SECTION (CRAVE 2-COLUMN LAYOUT) -->
+    <section class="crave-hero">
+      <!-- Left Column: Copy, Mission Input, Trust Indicators -->
+      <div class="crave-hero-left">
+        <span class="crave-pill-badge">✦ Local-first AI Workforce</span>
+        <h1 class="crave-headline">
+          Real files.<br>
+          <span class="crave-gradient-text">Controlled agents.</span>
+        </h1>
+        <p class="crave-subhead">
+          State a business goal. KUBERA deploys a bounded team of specialists and delivers an openable PPTX, DOCX or XLSX — not endless chat.
+        </p>
 
-      <div class="hero-cta-group">
-        <button class="primary-button" style="padding:12px 24px; font-size:15px;" data-action="nav" data-route="missions">
-          Start New Mission <b>→</b>
-        </button>
-        <button class="secondary-button" style="padding:12px 22px; font-size:15px;" data-action="nav" data-route="dashboard">
-          Explore Platform
-        </button>
+        <!-- Search-style Mission Input Field -->
+        <form data-form="landing-mission" class="crave-search-box">
+          <span class="crave-search-icon">🔍</span>
+          <input
+            name="landingPrompt"
+            id="landing-mission-input"
+            placeholder="What should KUBERA deliver? (e.g. Acme Q3 pipeline deck, furniture order #108)..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="crave-orange-btn">Start Mission ➔</button>
+        </form>
+
+        <!-- Quick Preset Prompt Chips -->
+        <div class="crave-chip-group">
+          <button type="button" class="crave-chip" data-action="landing-preset" data-prompt="Build a Q3 pipeline deck for Acme Corp">Acme Q3 Deck (PPTX)</button>
+          <button type="button" class="crave-chip" data-action="landing-preset" data-prompt="Process order for 50 chairs: check inventory, create invoice and dispatch">Order #50 Chairs (FlowSync)</button>
+          <button type="button" class="crave-chip" data-action="landing-preset" data-prompt="Write a Q3 client report for Acme Corp using the client report template">Client Memo (DOCX)</button>
+          <button type="button" class="crave-chip" data-action="landing-preset" data-prompt="Create a campaign budget and risk tracker spreadsheet for active projects">Budget Model (XLSX)</button>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="crave-trust-row">
+          <span>🔒 Local-first</span>
+          <span>•</span>
+          <span>🛡️ Fully Auditable</span>
+          <span>•</span>
+          <span>🖥️ Desktop App</span>
+          <span>•</span>
+          <span>⚡ Zero Telemetry</span>
+        </div>
       </div>
 
-      <div class="hero-trust-row">
-        <span>🔒 Local-first Architecture</span>
-        <span>•</span>
-        <span>🔗 Source-linked Evidence</span>
-        <span>•</span>
-        <span>📄 Real Office Files (PPTX · DOCX · XLSX)</span>
-      </div>
+      <!-- Right Column: 3D Floating Document Generation Showcase -->
+      <div class="crave-hero-right">
+        <div class="crave-mockup-wrapper">
+          <!-- Circular Glowing Backdrop -->
+          <div class="crave-mockup-orb" aria-hidden="true"></div>
 
-      <div class="hero-network-frame" id="workforce">
-        <svg class="network-svg-illustration" viewBox="0 0 900 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Background grid and node connections -->
-          <line x1="140" y1="120" x2="330" y2="70" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
-          <line x1="140" y1="120" x2="330" y2="170" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
-          <line x1="330" y1="70" x2="560" y2="120" stroke="var(--primary)" stroke-width="1.5" opacity="0.7"/>
-          <line x1="330" y1="170" x2="560" y2="120" stroke="var(--primary)" stroke-width="1.5" opacity="0.7"/>
-          <line x1="560" y1="120" x2="760" y2="120" stroke="var(--success)" stroke-width="2"/>
+          <!-- Central Live Document Card -->
+          <div class="crave-doc-card">
+            <div class="crave-doc-header">
+              <span class="crave-doc-badge">📊 PPTX Deck</span>
+              <span style="font-size:11px; font-weight:700; color:#10B981;">● 100% Verified</span>
+            </div>
+            <strong style="font-size:15px; letter-spacing:-0.01em; display:block; margin-bottom:4px;">Q3_Acme_Pipeline_Deck.pptx</strong>
+            <span style="font-size:11px; color:var(--muted); display:block;">Produced by W-2 Office Worker · 2.4 MB</span>
 
-          <!-- Asha (Manager) -->
-          <circle cx="140" cy="120" r="32" fill="var(--surface)" stroke="#8B5CF6" stroke-width="3"/>
-          <text x="140" y="115" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Asha</text>
-          <text x="140" y="132" text-anchor="middle" fill="#8B5CF6" font-size="9" font-weight="600">Manager</text>
+            <!-- Slide Preview Box -->
+            <div class="crave-slide-preview">
+              <div class="crave-slide-title">Executive Pipeline & Revenue Forecast</div>
+              <div class="crave-slide-bullet"><span>▸</span> <b>$1.24M</b> Contracted Enterprise Pipeline</div>
+              <div class="crave-slide-bullet"><span>▸</span> <b>84%</b> Win probability on Acme expansion</div>
+              <div class="crave-slide-bullet"><span>▸</span> <b>3</b> Mitigated delivery risk items flagged</div>
+            </div>
 
-          <!-- Maya (Market Analyst) -->
-          <circle cx="330" cy="70" r="28" fill="var(--surface)" stroke="#3B82F6" stroke-width="2.5"/>
-          <text x="330" y="66" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="700">Maya</text>
-          <text x="330" y="81" text-anchor="middle" fill="#3B82F6" font-size="9">Analyst</text>
+            <!-- Verification Progress Bar -->
+            <div class="crave-progress-bar">
+              <div class="crave-progress-fill"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700; color:#665E55; margin-bottom:14px;">
+              <span>Sentinel Quality Audit</span>
+              <span style="color:#10B981;">Passed 4/4 Checks ✓</span>
+            </div>
 
-          <!-- W-1 (Operations Analyst) -->
-          <circle cx="330" cy="170" r="28" fill="var(--surface)" stroke="#14B8A6" stroke-width="2.5"/>
-          <text x="330" y="166" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="700">W-1</text>
-          <text x="330" y="181" text-anchor="middle" fill="#14B8A6" font-size="9">Operations</text>
+            <!-- Card Actions -->
+            <div style="display:flex; gap:8px;">
+              <button class="crave-orange-btn" style="flex:1; justify-content:center; padding:8px 12px; font-size:12px;" data-action="nav" data-route="reports">Inspect File ➔</button>
+              <button class="crave-ghost-btn" style="padding:8px 12px; font-size:12px;" data-action="nav" data-route="missions">View Run</button>
+            </div>
+          </div>
 
-          <!-- W-2 (Document Worker) -->
-          <circle cx="560" cy="120" r="32" fill="var(--surface)" stroke="#F59E0B" stroke-width="3"/>
-          <text x="560" y="115" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">W-2</text>
-          <text x="560" y="132" text-anchor="middle" fill="#F59E0B" font-size="9" font-weight="600">Office Worker</text>
+          <!-- Floating Agent 1: Asha (Manager) -->
+          <div class="crave-floating-card crave-agent-asha">
+            <div class="crave-avatar-circle" style="background:linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%);">A</div>
+            <div>
+              <strong style="display:block; font-size:12px;">Asha (Manager)</strong>
+              <span style="font-size:10px; color:#8B5CF6; font-weight:600;">Bounded depth-one plan</span>
+            </div>
+          </div>
 
-          <!-- Sentinel (Reviewer) -->
-          <circle cx="760" cy="120" r="32" fill="var(--surface)" stroke="#10B981" stroke-width="3"/>
-          <text x="760" y="115" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Sentinel</text>
-          <text x="760" y="132" text-anchor="middle" fill="#10B981" font-size="9" font-weight="600">Reviewer</text>
-        </svg>
+          <!-- Floating Agent 2: Maya (Analyst) -->
+          <div class="crave-floating-card crave-agent-maya">
+            <div class="crave-avatar-circle" style="background:linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);">M</div>
+            <div>
+              <strong style="display:block; font-size:12px;">Maya (Analyst)</strong>
+              <span style="font-size:10px; color:#3B82F6; font-weight:600;">4 records cross-referenced</span>
+            </div>
+          </div>
+
+          <!-- Floating Agent 3: W-2 (Worker) -->
+          <div class="crave-floating-card crave-agent-worker">
+            <div class="crave-avatar-circle" style="background:linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);">W</div>
+            <div>
+              <strong style="display:block; font-size:12px;">W-2 (Doc Worker)</strong>
+              <span style="font-size:10px; color:#EA580C; font-weight:600;">Native binary PPTX generated</span>
+            </div>
+          </div>
+
+          <!-- Floating Agent 4: Sentinel (Reviewer) -->
+          <div class="crave-floating-card crave-agent-sentinel">
+            <div class="crave-avatar-circle" style="background:linear-gradient(135deg, #10B981 0%, #059669 100%);">S</div>
+            <div>
+              <strong style="display:block; font-size:12px;">Sentinel (Reviewer)</strong>
+              <span style="font-size:10px; color:#10B981; font-weight:700;">Zero hallucination verified ✓</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="features-section" id="features">
-      <div class="section-title-center">
-        <p class="eyebrow">Enterprise Capabilities</p>
-        <h2>Everything your business needs. One intelligent workforce.</h2>
+    <!-- SECTION 1: WHAT ARE YOU BUILDING? (CRAVE CATEGORIES) -->
+    <section class="crave-categories-section" id="categories">
+      <div class="crave-section-header">
+        <p class="crave-section-eyebrow">EXPLORE DELIVERABLES</p>
+        <h2 class="crave-section-title">What are you building?</h2>
+        <p class="crave-section-subhead">Choose the exact Office format your business requires. Real openable files — no copy-pasting from chat.</p>
       </div>
 
-      <div class="grid-3x2">
-        <div class="feature-card">
-          <div class="feature-icon-mark">◈</div>
-          <h3>1. Mission Execution</h3>
-          <p class="subhead" style="margin-top:6px;">Deploy bounded multi-agent operations from natural language requests, voice prompts, or schedules.</p>
+      <div class="crave-category-grid">
+        <!-- 1. PPTX Deck -->
+        <div class="crave-cat-card" data-action="nav" data-route="missions">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon">📊</div>
+              <span class="crave-cat-badge">.PPTX</span>
+            </div>
+            <h3>Board & Pipeline Deck</h3>
+            <p>Polished PowerPoint decks with slide layouts, executive talking points, metric callouts, and verified source citations.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#FF6B35; display:flex; align-items:center; gap:4px;">
+            <span>Generate Presentation</span> <span>➔</span>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">◎</div>
-          <h3>2. Intelligent Workforce</h3>
-          <p class="subhead" style="margin-top:6px;">Manager-led, depth-one agent collaboration with specialized analysts, workers, and peer reviewers.</p>
+
+        <!-- 2. DOCX Report -->
+        <div class="crave-cat-card" data-action="nav" data-route="missions">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon" style="background:#EFF6FF; color:#2563EB;">📄</div>
+              <span class="crave-cat-badge">.DOCX</span>
+            </div>
+            <h3>Client Memo & Contract</h3>
+            <p>Formatted Word documents with executive summaries, scope of work outlines, legal bounds, and structured client profiles.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#2563EB; display:flex; align-items:center; gap:4px;">
+            <span>Draft Executive Memo</span> <span>➔</span>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">▱</div>
-          <h3>3. Real Office File Generation</h3>
-          <p class="subhead" style="margin-top:6px;">Native generation of editable Microsoft PowerPoint decks, Word reports, and Excel spreadsheets.</p>
+
+        <!-- 3. XLSX Spreadsheet -->
+        <div class="crave-cat-card" data-action="nav" data-route="missions">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon" style="background:#F0FDF4; color:#16A34A;">▦</div>
+              <span class="crave-cat-badge">.XLSX</span>
+            </div>
+            <h3>Pipeline & Inventory Sheet</h3>
+            <p>Multi-tab Microsoft Excel workbooks with verified sum formulas, margin models, risk flags, and replenishment forecasts.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#16A34A; display:flex; align-items:center; gap:4px;">
+            <span>Build Spreadsheet Model</span> <span>➔</span>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">🎤</div>
-          <h3>4. Voice Commands</h3>
-          <p class="subhead" style="margin-top:6px;">Hands-free mission dispatch powered by speech transcription with live interim preview and confirmation.</p>
+
+        <!-- 4. FlowSync Operations Hub -->
+        <div class="crave-cat-card" data-action="nav" data-route="dashboard">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon" style="background:#FFF7ED; color:#EA580C;">⚙️</div>
+              <span class="crave-cat-badge">FLOWSYNC</span>
+            </div>
+            <h3>Central Operations Hub</h3>
+            <p>Unify customer orders, inventory checks, employee dispatch, and invoicing into one calm, automated command surface.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#EA580C; display:flex; align-items:center; gap:4px;">
+            <span>Open Operations Hub</span> <span>➔</span>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">🛡️</div>
-          <h3>5. Secure Workspace</h3>
-          <p class="subhead" style="margin-top:6px;">Local-first data isolation with zero outbound telemetry, strict egress controls, and full data sovereignty.</p>
+
+        <!-- 5. Scheduled Mission -->
+        <div class="crave-cat-card" data-action="nav" data-route="missions">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon" style="background:#FAF5FF; color:#9333EA;">⏱️</div>
+              <span class="crave-cat-badge">RECURRING</span>
+            </div>
+            <h3>Scheduled Workforce Mission</h3>
+            <p>Autonomous hourly, daily, or weekly operations executed on your schedule — producing reports while you sleep.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#9333EA; display:flex; align-items:center; gap:4px;">
+            <span>Configure Schedules</span> <span>➔</span>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">▦</div>
-          <h3>6. Business Intelligence</h3>
-          <p class="subhead" style="margin-top:6px;">Unified client directory, contract values, and project health risk flags linked directly to deliverable citations.</p>
+
+        <!-- 6. Sovereign Audit Trail -->
+        <div class="crave-cat-card" data-action="nav" data-route="admin-audit">
+          <div>
+            <div class="crave-cat-top">
+              <div class="crave-cat-icon" style="background:#FEF2F2; color:#DC2626;">📜</div>
+              <span class="crave-cat-badge">SOVEREIGN</span>
+            </div>
+            <h3>Tamper-Proof Audit Trail</h3>
+            <p>Full chronological record of every prompt, thought, delegation, decision, and deliverable checksum stored locally.</p>
+          </div>
+          <div style="margin-top:20px; font-size:12px; font-weight:700; color:#DC2626; display:flex; align-items:center; gap:4px;">
+            <span>Inspect Audit Stream</span> <span>➔</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="workflow-section" id="workflow">
-      <div class="section-title-center">
-        <p class="eyebrow">Controlled Lifecycle</p>
-        <h2>How KUBERA AI Works</h2>
+    <!-- SECTION 2: HOW IT WORKS (5-STEP VISUAL FLOW) -->
+    <section class="crave-steps-section" id="how-it-works">
+      <div class="crave-section-header">
+        <p class="crave-section-eyebrow">CONTROLLED LIFECYCLE</p>
+        <h2 class="crave-section-title">How KUBERA AI Works</h2>
+        <p class="crave-section-subhead">A governed, bounded 5-step lifecycle from simple business request to verified Office deliverable.</p>
       </div>
 
-      <div class="workflow-steps-grid">
-        <div class="step-card">
-          <div class="step-num">01</div>
-          <h3>Describe Your Mission</h3>
-          <p class="subhead">Type or speak your business requirements and attach reference documents.</p>
+      <div class="crave-steps-grid">
+        <!-- Step 1 -->
+        <div class="crave-step-card">
+          <div class="crave-step-badge">01</div>
+          <h4>State Your Goal</h4>
+          <p>Type a mission prompt, speak via microphone, or trigger via schedule with device file attachments.</p>
         </div>
-        <div class="step-card">
-          <div class="step-num">02</div>
-          <h3>AI Agents Collaborate</h3>
-          <p class="subhead">Asha assigns bounded subtasks to Maya, W-1, and W-2 for parallel analysis.</p>
+
+        <!-- Step 2 -->
+        <div class="crave-step-card">
+          <div class="crave-step-badge">02</div>
+          <h4>Asha Scopes Plan</h4>
+          <p>Manager agent creates a bounded depth-one task breakdown. No recursive chaos or runaway tokens.</p>
         </div>
-        <div class="step-card">
-          <div class="step-num">03</div>
-          <h3>Sentinel Peer Review</h3>
-          <p class="subhead">Quality verification ensures all outputs link back to verified source records.</p>
+
+        <!-- Step 3 -->
+        <div class="crave-step-card">
+          <div class="crave-step-badge">03</div>
+          <h4>Specialists Execute</h4>
+          <p>Maya analyzes data, W-1 reviews operations, and W-2 formats native PowerPoint, Word, or Excel files.</p>
         </div>
-        <div class="step-card">
-          <div class="step-num">04</div>
-          <h3>Download Real Office Files</h3>
-          <p class="subhead">Inspect interactive outlines, visual previews, or export PPTX, DOCX, and XLSX.</p>
+
+        <!-- Step 4 -->
+        <div class="crave-step-card">
+          <div class="crave-step-badge">04</div>
+          <h4>Sentinel Reviews</h4>
+          <p>Quality and compliance verification validates that every claim links back to verified source records.</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="crave-step-card">
+          <div class="crave-step-badge">05</div>
+          <h4>Real File Lands</h4>
+          <p>Your openable Office file is deposited in Report Center, ready to inspect, download, or email via SMTP.</p>
         </div>
       </div>
-    <section class="security-section" id="security">
-      <div class="section-title-center">
-        <p class="eyebrow">Enterprise Governance</p>
-        <h2>AI productivity. Business-grade control.</h2>
-        <p class="subhead" style="margin:8px auto 0; max-width:620px;">
-          Built for organizations that demand complete sovereignty, source attribution, and deterministic bounds over their digital workforce.
+    </section>
+
+    <!-- SECTION 3: FLOWSYNC OPERATIONS WORKFLOW (REAL-WORLD EXAMPLE) -->
+    <section class="crave-flowsync-section" id="flowsync-story">
+      <div class="crave-section-header">
+        <p class="crave-section-eyebrow">THE OPERATIONAL TRANSFORMATION</p>
+        <h2 class="crave-section-title">From WhatsApp & Excel Chaos to FlowSync</h2>
+        <p class="crave-section-subhead">
+          Instead of juggling work through spreadsheets, WhatsApp chats, phone calls, and paper records, FlowSync unifies your entire business into one calm, automated system.
         </p>
       </div>
 
-      <div class="grid-3x2" style="margin-top:32px;">
-        <div class="feature-card">
-          <div class="feature-icon-mark">🔒</div>
-          <h3>Local-first Architecture</h3>
-          <p class="subhead">Data stays in your SQLite database and filesystem with no background telemetry.</p>
+      <div class="crave-comparison-grid">
+        <!-- The Old Manual Way -->
+        <div class="crave-compare-card crave-compare-old">
+          <h3><span>⚠️</span> The Old Disjointed Way</h3>
+          <p style="font-size:13.5px; margin:0 0 16px; opacity:0.85;">
+            Example: A furniture company receives an order for <b>50 office chairs</b>.
+          </p>
+          <div class="crave-compare-list">
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-bad">✕</span>
+              <span>Order scribbled into a loose Excel sheet on one computer</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-bad">✕</span>
+              <span>Manager messaged through noisy WhatsApp groups and lost in chat</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-bad">✕</span>
+              <span>Warehouse staff physically checks paper clipboards for stock</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-bad">✕</span>
+              <span>Accounts drafts invoice days later in a separate siloed tool</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-bad">✕</span>
+              <span>Customer repeatedly calls asking for order status and delivery dates</span>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">🛡️</div>
-          <h3>Controlled Agent Execution</h3>
-          <p class="subhead">Depth-one delegation with bounded subtasks prevents runaway recursion.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">🔗</div>
-          <h3>Source-linked Outputs</h3>
-          <p class="subhead">Every metric, figure, and recommendation references verified local records.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">📜</div>
-          <h3>Transparent Activity</h3>
-          <p class="subhead">Complete tamper-evident chronological audit logging across all agent steps.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">🏛️</div>
-          <h3>Secure Workspace</h3>
-          <p class="subhead">Multi-role separation prevents unauthorized escalation and isolates business data.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-mark">📄</div>
-          <h3>Real File Generation</h3>
-          <p class="subhead">Generates native binary Microsoft PPTX, DOCX, and XLSX files via standard bridges.</p>
+
+        <!-- The KUBERA + FlowSync Way -->
+        <div class="crave-compare-card crave-compare-new">
+          <h3><span>⚡</span> The KUBERA + FlowSync Way</h3>
+          <p style="font-size:13.5px; margin:0 0 16px; color:#E8590C; font-weight:700;">
+            Unified, automated, and intelligent execution in one platform:
+          </p>
+          <div class="crave-compare-list">
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-good">✓</span>
+              <span>Customer places order online or manager enters goal in 1 line</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-good">✓</span>
+              <span>System automatically checks inventory & predicts replenishment timing</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-good">✓</span>
+              <span>Admin approves order with a single click</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-good">✓</span>
+              <span>Employee automatically assigned with live status and fulfillment tasks</span>
+            </div>
+            <div class="crave-compare-item">
+              <span class="crave-compare-icon-good">✓</span>
+              <span>Customer tracks order live; verified DOCX invoice generated on-device instantly!</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section style="padding:60px 24px; text-align:center; background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
-      <p class="eyebrow">Ready for Deployment</p>
-      <h2 style="font-size:32px; margin:8px 0 20px;">Meet your new digital workforce.</h2>
-      <div style="display:flex; justify-content:center; gap:12px;">
-        <button class="primary-button" style="padding:12px 24px; font-size:14px;" data-action="nav" data-route="dashboard">Get Started →</button>
-        <button class="secondary-button" style="padding:12px 20px; font-size:14px;" data-action="nav" data-route="login">Sign In</button>
+    <!-- SECTION 4: THREE MODULES (CUSTOMER, EMPLOYEE, ADMIN) -->
+    <section class="crave-modules-section" id="modules">
+      <div class="crave-section-header">
+        <p class="crave-section-eyebrow">ENTERPRISE ARCHITECTURE</p>
+        <h2 class="crave-section-title">Three Unified Business Modules</h2>
+        <p class="crave-section-subhead">Role-based controls tailored for your clients, your operational workforce, and sovereign administrative oversight.</p>
+      </div>
+
+      <div class="crave-modules-grid">
+        <!-- Module 1: Customer Module -->
+        <div class="crave-module-card">
+          <div>
+            <span class="crave-module-pill crave-pill-customer">Customer Module</span>
+            <h3>Customer Experience</h3>
+            <p>Empower clients to place orders, track live milestone progress, access verified invoices, and communicate directly with your team.</p>
+            <div class="crave-module-features">
+              <span><b>✓</b> Live Order & Delivery Tracking</span>
+              <span><b>✓</b> Instant Native Invoices & Receipts</span>
+              <span><b>✓</b> Direct Milestone Notifications</span>
+              <span><b>✓</b> Frictionless Account Self-Service</span>
+            </div>
+          </div>
+          <button class="crave-ghost-btn" style="margin-top:24px; width:100%;" data-action="nav" data-route="clients">Explore Client Directory ➔</button>
+        </div>
+
+        <!-- Module 2: Employee Module -->
+        <div class="crave-module-card">
+          <div>
+            <span class="crave-module-pill crave-pill-employee">Employee Module</span>
+            <h3>Workforce Execution</h3>
+            <p>Give your staff clear task assignments, automated inventory deductions, delivery dispatch tools, and real-time order updates.</p>
+            <div class="crave-module-features">
+              <span><b>✓</b> Automated Task Queues & Milestones</span>
+              <span><b>✓</b> Real-time Inventory Deductions</span>
+              <span><b>✓</b> Delivery & Fulfillment Hand-offs</span>
+              <span><b>✓</b> Synchronized Team Activity Stream</span>
+            </div>
+          </div>
+          <button class="crave-ghost-btn" style="margin-top:24px; width:100%;" data-action="nav" data-route="workforce">Inspect Digital Workforce ➔</button>
+        </div>
+
+        <!-- Module 3: Admin Sovereign Module -->
+        <div class="crave-module-card">
+          <div>
+            <span class="crave-module-pill crave-pill-admin">Admin Sovereign Module</span>
+            <h3>Command & Analytics</h3>
+            <p>Full executive control over customer relationships, inventory levels, payments, agent guardrails, and AI-powered replenishment insights.</p>
+            <div class="crave-module-features">
+              <span><b>✓</b> Complete Client & Project Records</span>
+              <span><b>✓</b> AI Stock Replenishment Forecasts</span>
+              <span><b>✓</b> Controlled Agent Configuration</span>
+              <span><b>✓</b> Tamper-proof Audit Ledger</span>
+            </div>
+          </div>
+          <button class="crave-orange-btn" style="margin-top:24px; width:100%; justify-content:center;" data-action="nav" data-route="admin-dashboard">Admin Command Center ➔</button>
+        </div>
       </div>
     </section>
 
-    <footer class="landing-footer">
-      <div class="footer-inner">
-        <div>
-          <strong>KUBERA AI</strong> — Your Self-Managing Digital Workforce
-          <p style="margin:4px 0 0; color:var(--dim);">Local-first business operations platform.</p>
+    <!-- SECTION 5: KEY BENEFITS -->
+    <section class="crave-benefits-section" id="benefits">
+      <div class="crave-section-header">
+        <p class="crave-section-eyebrow">THE SOVEREIGN DIFFERENCE</p>
+        <h2 class="crave-section-title">Built for Real Business Operations</h2>
+        <p class="crave-section-subhead">Designed from first principles to avoid the pitfalls of generic chatbots and cloud surveillance.</p>
+      </div>
+
+      <div class="crave-benefits-grid">
+        <!-- Benefit 1 -->
+        <div class="crave-benefit-card">
+          <div class="crave-benefit-icon">🛡️</div>
+          <h3>Controlled Workforce</h3>
+          <p>No recursive loops, no hallucinations, and no runaway token burn. Strict depth-one delegation with bounded subtasks keeps every execution accountable.</p>
         </div>
-        <div style="display:flex; gap:16px;">
+
+        <!-- Benefit 2 -->
+        <div class="crave-benefit-card">
+          <div class="crave-benefit-icon" style="background:#EFF6FF; color:#2563EB;">📄</div>
+          <h3>Real Openable Office Files</h3>
+          <p>Native binary PPTX, DOCX, and XLSX files generated on your computer that open cleanly in Microsoft Office, Apple iWork, or Google Workspace.</p>
+        </div>
+
+        <!-- Benefit 3 -->
+        <div class="crave-benefit-card">
+          <div class="crave-benefit-icon" style="background:#F0FDF4; color:#16A34A;">🔒</div>
+          <h3>100% Local Sovereignty</h3>
+          <p>Runs locally on your computer with SQLite persistence and strict egress rules. Your business records and customer data never leak to third-party scrapers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: FINAL CTA (CRAVE WARM PEACH GRADIENT) -->
+    <section class="crave-cta-section">
+      <div class="crave-cta-box">
+        <h2 class="crave-cta-headline">Stop chatting. Start shipping files.</h2>
+        <p class="crave-cta-subhead">
+          Replace disjointed WhatsApp chats, loose spreadsheets, and hallucinating chatbots with a centralized, automated digital workforce.
+        </p>
+        <div class="crave-cta-actions">
+          <button class="crave-orange-btn" style="padding:14px 32px; font-size:15px;" data-action="nav" data-route="missions">Launch KUBERA Workspace ➔</button>
+          <button class="crave-ghost-btn" style="padding:14px 28px; font-size:15px; background:rgba(255,255,255,0.8);" data-action="nav" data-route="dashboard">Try Interactive Demo</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="crave-footer">
+      <div class="crave-footer-inner">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="/assets/aistudio/KUBERA_UPDATING_LOGO_d3167c7e.png" alt="KUBERA AI" class="crave-logo-img" />
+          <div>
+            <strong style="color:var(--text); font-size:14px;">KUBERA<span class="crave-dot">.</span></strong>
+            <div style="font-size:11.5px; color:var(--muted);">FlowSync Operations & Autonomous Digital Workforce</div>
+          </div>
+        </div>
+
+        <div class="crave-footer-links">
+          <a href="#categories">Deliverables</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#flowsync-story">FlowSync Story</a>
           <a href="#" data-action="nav" data-route="login">Sign In</a>
           <a href="#" data-action="nav" data-route="admin-login">Admin Portal</a>
           <a href="#" data-action="nav" data-route="dashboard">Workspace</a>
         </div>
+      </div>
+      <div style="max-width:1140px; margin:24px auto 0; padding-top:16px; border-top:1px solid rgba(220,210,200,0.5); display:flex; justify-content:space-between; font-size:11.5px; color:var(--dim); flex-wrap:wrap; gap:8px;">
+        <span>© 2026 KUBERA AI · Local-First Business Operations · Apache-2.0</span>
+        <span>Local SQLite & File Persistence · Desktop Native Ready</span>
       </div>
     </footer>
   </div>`;
@@ -1394,8 +1678,8 @@ function renderLogin(state) {
       <div class="login-brand-panel">
         <div>
           <div class="brand">
-            <span class="brand-mark">K</span>
-            <span style="color:#FFF;">KUBERA<b style="color:#C084FC;">AI</b></span>
+            <img src="/assets/aistudio/KUBERA_UPDATING_LOGO_d3167c7e.png" alt="KUBERA" class="brand-logo-img" />
+            <span style="color:#FFF;">KUBERA<span class="brand-dot">.</span></span>
           </div>
           <span class="prototype-tag" style="margin-top:14px; background:rgba(168,85,247,0.18); color:#DDD6FE; border-color:rgba(192,132,252,0.35);">
             YOUR DIGITAL WORKFORCE
@@ -2123,6 +2407,19 @@ window.addEventListener('drop', (e) => {
 
 // Main click event delegation
 root.addEventListener('click', (event) => {
+  const hashAnchor = event.target.closest('a[href^="#"]');
+  if (hashAnchor) {
+    const href = hashAnchor.getAttribute('href');
+    if (href && href.length > 1 && href.startsWith('#')) {
+      const targetEl = root.querySelector(href);
+      if (targetEl) {
+        event.preventDefault();
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+  }
+
   const actionTarget = event.target.closest('[data-action]');
   if (!actionTarget) return;
   if (actionTarget.tagName === 'A' || actionTarget.closest('a')) {
@@ -2214,6 +2511,15 @@ root.addEventListener('click', (event) => {
     api.update((next) => {
       next.ui = { ...(next.ui || {}), missionDraftText: actionTarget.dataset.prompt };
     });
+  }
+
+  if (action === 'landing-preset') {
+    const prompt = actionTarget.dataset.prompt || '';
+    api.update((next) => {
+      next.route = 'missions';
+      next.ui = { ...(next.ui || {}), missionDraftText: prompt };
+    });
+    toast(`Mission draft loaded: "${prompt.slice(0, 32)}..."`, 'info');
   }
 
   // 8. Quick deploy deck action from command palette
@@ -2466,6 +2772,24 @@ root.addEventListener('click', (event) => {
 root.addEventListener('submit', (event) => {
   event.preventDefault();
   const form = event.target;
+
+  // 0. Landing Page Mission Input
+  if (form.dataset.form === 'landing-mission') {
+    const data = new FormData(form);
+    const landingPrompt = String(data.get('landingPrompt') || '').trim();
+    if (landingPrompt) {
+      api.update((next) => {
+        next.route = 'missions';
+        next.ui = { ...(next.ui || {}), missionDraftText: landingPrompt };
+      });
+      toast('Mission draft loaded into workforce composer.', 'success');
+    } else {
+      api.update((next) => {
+        next.route = 'missions';
+      });
+    }
+    return;
+  }
 
   // 1. Mission deployment
   if (form.dataset.form === 'mission') {
