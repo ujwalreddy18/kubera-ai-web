@@ -18,22 +18,22 @@ function generateVisualPreviewHtml(report) {
 
   if (type === 'pptx') {
     return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
-      body { margin:0; padding:16px; font-family:Inter,system-ui,sans-serif; background:#040c1e; color:#e0e8f8; }
+      body { margin:0; padding:16px; font-family:Inter,system-ui,sans-serif; background:#05020a; color:#f5f3ff; }
       .deck { display:flex; flex-direction:column; gap:16px; }
-      .slide { background:#071a42; border:1px solid #1a3d82; border-radius:10px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
-      .slide-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#709be6; }
+      .slide { background:linear-gradient(180deg, rgba(28, 14, 52, 0.95) 0%, rgba(13, 6, 26, 0.98) 100%); border:1px solid rgba(168, 85, 247, 0.35); border-radius:10px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(139, 92, 246, 0.2); }
+      .slide-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#c084fc; }
       .slide-title { font-size:17px; font-weight:700; margin:6px 0 14px; color:#ffffff; }
       .metrics-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px; }
-      .metric-box { background:#0c255c; border:1px solid #245fcb; border-radius:6px; padding:12px; text-align:center; }
-      .metric-box span { font-size:9px; text-transform:uppercase; color:#9cbdf5; display:block; margin-bottom:4px; }
+      .metric-box { background:rgba(38, 19, 74, 0.75); border:1px solid rgba(168, 85, 247, 0.4); border-radius:6px; padding:12px; text-align:center; }
+      .metric-box span { font-size:9px; text-transform:uppercase; color:#c4b5fd; display:block; margin-bottom:4px; }
       .metric-box strong { font-size:16px; color:#ffffff; }
-      ul { margin:8px 0; padding-left:20px; font-size:12px; line-height:1.6; color:#b8cff6; }
+      ul { margin:8px 0; padding-left:20px; font-size:12px; line-height:1.6; color:#ddd6fe; }
     </style></head><body>
       <div class="deck">
         <div class="slide">
           <div class="slide-num">Slide 1 of ${outline.length + 1} · Executive Title</div>
           <div class="slide-title">${title}</div>
-          <p style="font-size:12px; color:#9cbdf5; margin:0;">Prepared by KUBERA Managed Workforce · Date: ${dateStr}</p>
+          <p style="font-size:12px; color:#c4b5fd; margin:0;">Prepared by KUBERA Managed Workforce · Date: ${dateStr}</p>
           <div class="metrics-grid">
             <div class="metric-box"><span>Pipeline Value</span><strong>$${Number(data.pipelineValue || 0).toLocaleString()}</strong></div>
             <div class="metric-box"><span>Projects</span><strong>${data.projectCount || 0}</strong></div>
@@ -58,11 +58,11 @@ function generateVisualPreviewHtml(report) {
   if (type === 'docx') {
     return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
       body { margin:0; padding:20px; font-family:Georgia,serif; background:#ffffff; color:#222; max-width:680px; margin:0 auto; font-size:14px; line-height:1.6; }
-      .doc-header { border-bottom:2px solid #071a42; padding-bottom:12px; margin-bottom:20px; }
-      .doc-header h1 { margin:0 0 6px; font-family:Inter,sans-serif; font-size:20px; color:#071a42; }
+      .doc-header { border-bottom:2px solid #8b5cf6; padding-bottom:12px; margin-bottom:20px; }
+      .doc-header h1 { margin:0 0 6px; font-family:Inter,sans-serif; font-size:20px; color:#1e1035; }
       .doc-meta { font-family:Inter,sans-serif; font-size:11px; color:#666; }
-      .section-heading { font-family:Inter,sans-serif; font-size:14px; font-weight:700; color:#071a42; margin-top:20px; margin-bottom:6px; border-bottom:1px solid #ddd; padding-bottom:4px; }
-      .summary-box { background:#f4f7fc; border-left:4px solid #245fcb; padding:12px; margin:16px 0; font-family:Inter,sans-serif; font-size:12px; }
+      .section-heading { font-family:Inter,sans-serif; font-size:14px; font-weight:700; color:#5b21b6; margin-top:20px; margin-bottom:6px; border-bottom:1px solid #ddd; padding-bottom:4px; }
+      .summary-box { background:#f5f0ff; border-left:4px solid #8b5cf6; padding:12px; margin:16px 0; font-family:Inter,sans-serif; font-size:12px; color:#1e1035; }
     </style></head><body>
       <div class="doc-header">
         <h1>${title}</h1>
@@ -80,14 +80,14 @@ function generateVisualPreviewHtml(report) {
 
   // xlsx visual preview
   return `<!DOCTYPE html><html><head><meta charset="utf-8"/><style>
-    body { margin:0; padding:16px; font-family:Inter,system-ui,sans-serif; background:#071a42; color:#f0f4fc; font-size:12px; }
+    body { margin:0; padding:16px; font-family:Inter,system-ui,sans-serif; background:#05020a; color:#f0f4fc; font-size:12px; }
     .sheet-title { font-size:15px; font-weight:700; margin-bottom:12px; color:#ffffff; }
-    table { width:100%; border-collapse:collapse; background:#0b2154; border-radius:8px; overflow:hidden; }
-    th { background:#123a8c; color:#ffffff; text-align:left; padding:8px 12px; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; }
-    td { padding:8px 12px; border-bottom:1px solid #1a3d82; color:#d2e0f8; }
+    table { width:100%; border-collapse:collapse; background:#100624; border-radius:8px; overflow:hidden; border:1px solid rgba(168, 85, 247, 0.3); }
+    th { background:#240f4a; color:#ffffff; text-align:left; padding:8px 12px; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid rgba(168, 85, 247, 0.35); }
+    td { padding:8px 12px; border-bottom:1px solid rgba(139, 92, 246, 0.2); color:#ddd6fe; }
     tr:last-child td { border-bottom:none; }
     .num { text-align:right; font-variant-numeric:tabular-nums; }
-    .total-row td { background:#0e2968; font-weight:700; color:#ffffff; border-top:2px solid #245fcb; }
+    .total-row td { background:#1e093d; font-weight:700; color:#ffffff; border-top:2px solid #8b5cf6; }
   </style></head><body>
     <div class="sheet-title">${title} — Financial Workbook</div>
     <table>

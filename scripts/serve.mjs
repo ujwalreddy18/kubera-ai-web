@@ -3,13 +3,23 @@ import { createServer, request as proxyRequest } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
 
 const root = resolve(process.cwd(), 'src');
+const publicRoot = resolve(process.cwd(), 'public');
 const port = Number(process.env.PORT || process.argv[2] || 3000);
 const types = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml; charset=utf-8'
+  '.svg': 'image/svg+xml; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.ico': 'image/x-icon',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.txt': 'text/plain; charset=utf-8'
 };
 
 function proxyOpenCode(req, res, urlPath) {
@@ -41,11 +51,16 @@ createServer((req, res) => {
   }
 
   const requestPath = urlPath === '/' ? '/index.html' : urlPath;
-  const filePath = normalize(join(root, requestPath));
+  let filePath = normalize(join(root, requestPath));
   if (!filePath.startsWith(root) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Not found');
-    return;
+    const publicPath = normalize(join(publicRoot, requestPath.replace(/^\/public\//, '/')));
+    if (publicPath.startsWith(publicRoot) && existsSync(publicPath) && !statSync(publicPath).isDirectory()) {
+      filePath = publicPath;
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Not found');
+      return;
+    }
   }
 
   res.writeHead(200, {

@@ -1395,9 +1395,9 @@ function renderLogin(state) {
         <div>
           <div class="brand">
             <span class="brand-mark">K</span>
-            <span style="color:#FFF;">KUBERA<b style="color:#60A5FA;">AI</b></span>
+            <span style="color:#FFF;">KUBERA<b style="color:#C084FC;">AI</b></span>
           </div>
-          <span class="prototype-tag" style="margin-top:14px; background:rgba(255,255,255,0.12); color:#93C5FD; border-color:rgba(147,197,253,0.3);">
+          <span class="prototype-tag" style="margin-top:14px; background:rgba(168,85,247,0.18); color:#DDD6FE; border-color:rgba(192,132,252,0.35);">
             YOUR DIGITAL WORKFORCE
           </span>
           <h2>
@@ -1550,7 +1550,7 @@ function renderCommandPalette(state) {
   const filtered = commands.filter((cmd) => cmd.title.toLowerCase().includes(search) || cmd.cat.toLowerCase().includes(search));
 
   return `<div class="cmd-palette-backdrop" data-action="close-cmd-palette">
-    <div class="cmd-palette-dialog" onclick="event.stopPropagation()">
+    <div class="cmd-palette-dialog">
       <div class="cmd-search-header">
         <span>🔍</span>
         <input
@@ -1604,7 +1604,7 @@ function renderModal(state) {
         : '';
 
     return `<div class="modal-backdrop" data-action="close-report">
-      <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal">
         <button class="icon-button modal-close" data-action="close-report">×</button>
         <span class="pill info">${report.type.toUpperCase()} · Verified Artifact</span>
         <h2 style="margin:10px 0 4px;">${escapeHtml(report.name)}</h2>
@@ -1635,7 +1635,7 @@ function renderModal(state) {
     const client = clientId ? state.clients.find((c) => c.id === clientId) : null;
 
     return `<div class="modal-backdrop" data-action="close-record-form">
-      <div class="modal" style="max-width:480px;" onclick="event.stopPropagation()">
+      <div class="modal" style="max-width:480px;">
         <button class="icon-button modal-close" data-action="close-record-form">×</button>
         <h2>${client ? 'Edit Client Record' : 'New Client Record'}</h2>
         <p class="subhead">Manage client profile details in local persistence.</p>
@@ -1676,7 +1676,7 @@ function renderModal(state) {
     const project = projectId ? state.projects.find((p) => p.id === projectId) : null;
 
     return `<div class="modal-backdrop" data-action="close-record-form">
-      <div class="modal" style="max-width:480px;" onclick="event.stopPropagation()">
+      <div class="modal" style="max-width:480px;">
         <button class="icon-button modal-close" data-action="close-record-form">×</button>
         <h2>${project ? 'Edit Project' : 'New Project Opportunity'}</h2>
         <p class="subhead">Update project pipeline attributes and risk flags.</p>
@@ -1724,7 +1724,7 @@ function renderModal(state) {
   // 4. CSV Import Modal
   if (state.ui?.recordForm === 'project-import') {
     return `<div class="modal-backdrop" data-action="close-record-form">
-      <div class="modal" style="max-width:520px;" onclick="event.stopPropagation()">
+      <div class="modal" style="max-width:520px;">
         <button class="icon-button modal-close" data-action="close-record-form">×</button>
         <h2>Import Projects from CSV</h2>
         <p class="subhead">Bulk import opportunities with schema validation (name, stage, value, risk_flag).</p>
@@ -1760,7 +1760,7 @@ function renderModal(state) {
     if (!report) return '';
 
     return `<div class="modal-backdrop" data-action="hide-delivery-form">
-      <div class="modal" style="max-width:480px;" onclick="event.stopPropagation()">
+      <div class="modal" style="max-width:480px;">
         <button class="icon-button modal-close" data-action="hide-delivery-form">×</button>
         <p class="eyebrow">External Delivery</p>
         <h2>Send ${escapeHtml(report.name)}</h2>
@@ -2019,8 +2019,16 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape') {
     const st = api.getState();
-    if (st.ui?.commandPaletteOpen) {
-      api.update((next) => { next.ui = { ...(next.ui || {}), commandPaletteOpen: false }; });
+    if (st.ui?.commandPaletteOpen || st.ui?.modalReportId || st.ui?.recordForm || st.ui?.deliveryReportId) {
+      api.update((next) => {
+        next.ui = {
+          ...(next.ui || {}),
+          commandPaletteOpen: false,
+          modalReportId: null,
+          recordForm: null,
+          deliveryReportId: null
+        };
+      });
     }
   }
 });
@@ -2167,6 +2175,9 @@ root.addEventListener('click', (event) => {
   }
 
   if (action === 'close-cmd-palette') {
+    if (actionTarget.classList.contains('cmd-palette-backdrop') && event.target !== actionTarget) {
+      return;
+    }
     api.update((next) => {
       next.ui = { ...(next.ui || {}), commandPaletteOpen: false };
     });
@@ -2268,6 +2279,9 @@ root.addEventListener('click', (event) => {
   }
 
   if (action === 'close-report') {
+    if (actionTarget.classList.contains('modal-backdrop') && event.target !== actionTarget) {
+      return;
+    }
     api.update((next) => {
       next.ui = { ...(next.ui || {}), modalReportId: null };
     });
@@ -2347,6 +2361,9 @@ root.addEventListener('click', (event) => {
   }
 
   if (action === 'hide-delivery-form') {
+    if (actionTarget.classList.contains('modal-backdrop') && event.target !== actionTarget) {
+      return;
+    }
     api.update((next) => {
       next.ui = { ...(next.ui || {}), deliveryReportId: null };
     });
@@ -2384,6 +2401,9 @@ root.addEventListener('click', (event) => {
   }
 
   if (action === 'close-record-form') {
+    if (actionTarget.classList.contains('modal-backdrop') && event.target !== actionTarget) {
+      return;
+    }
     api.update((next) => {
       next.ui = { ...(next.ui || {}), recordForm: null };
     });
@@ -2409,7 +2429,20 @@ root.addEventListener('click', (event) => {
     const templateId = actionTarget.dataset.templateId;
     if (typeof api.exportTemplateBundle === 'function') {
       api.exportTemplateBundle(templateId)
-        .then(() => toast('Template bundle exported as .kubera-template.zip', 'success'))
+        .then((result) => {
+          if (result?.bytes && result?.fileName && typeof window !== 'undefined') {
+            const blob = new Blob([new Uint8Array(result.bytes)], { type: 'application/zip' });
+            const url = URL.createObjectURL(blob);
+            const dl = document.createElement('a');
+            dl.href = url;
+            dl.download = result.fileName;
+            document.body.appendChild(dl);
+            dl.click();
+            document.body.removeChild(dl);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          }
+          toast('Template bundle exported as .kubera-template.zip', 'success');
+        })
         .catch((err) => toast(err?.message || 'Export failed.', 'danger'));
     }
   }
