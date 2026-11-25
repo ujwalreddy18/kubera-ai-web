@@ -1,0 +1,40 @@
+/* Markus-inspired workforce enhancements: compact team board, peer-review evidence, and isolated-workspace labels.
+   Imported by app.css so the visual language remains local to KUBERA. */
+.team-board { padding: 16px 20px 19px; border-bottom: 1px solid var(--line); background: rgba(22, 11, 42, .45); }
+.board-topline { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 13px; }
+.board-topline h3 { margin: 0; color: #FAF5FF; font-size: 12px; }
+.board-topline > span { max-width: 300px; color: #C084FC; font-size: 9px; line-height: 1.4; text-align: right; }
+.board-columns { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.board-column { min-width: 150px; min-height: 163px; padding: 8px; border: 1px solid rgba(139, 92, 246, .35); border-radius: 8px; background: rgba(18, 9, 34, .85); }
+.board-column-title { display: flex; align-items: center; justify-content: space-between; padding-bottom: 7px; color: #C084FC; border-bottom: 1px solid rgba(139, 92, 246, .25); font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.board-column-title b { display: grid; place-items: center; min-width: 17px; height: 17px; padding: 0 4px; color: #F5F3FF; border-radius: 4px; background: rgba(139, 92, 246, .28); font-size: 9px; }
+.board-column.working .board-column-title { color: #DDD6FE; }
+.board-column.review .board-column-title { color: #DDD6FE; }
+.board-column.approved .board-column-title { color: #DDD6FE; }
+.board-task-list { display: grid; gap: 6px; margin-top: 7px; }
+.board-task-list .task-card { align-items: flex-start; margin: 0; padding: 8px; gap: 7px; border-radius: 7px; }
+.board-task-list .agent-avatar { width: 21px; height: 21px; border-radius: 6px; font-size: 8px; }
+.board-task-list .task-title-row { display: block; }
+.board-task-list .task-title-row .pill { margin-top: 4px; }
+.board-task-list .task-copy p { margin: 4px 0 3px; font-size: 9px; line-height: 1.35; }
+.board-task-list .task-copy small, .board-task-list .task-reviewer, .board-task-list .task-workspace { display: none; }
+.empty-board-slot { padding: 8px 3px; color: #7C6F99; font-size: 11px; }
+.task-reviewer, .task-workspace { display: block; margin-top: 5px; color: #C084FC; font-size: 9px; line-height: 1.35; }
+.task-reviewer { color: #E9D5FF; }
+.task-workspace { color: #C084FC; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+.handoff-chip.pending_review { color: #F5F3FF; border-color: rgba(192, 132, 252, .4); background: rgba(139, 92, 246, 0.22); }
+
+@media (max-width: 1070px) {
+  .board-columns { grid-template-columns: repeat(5, minmax(170px, 1fr)); }
+}
+@media (max-width: 760px) {
+  .team-board { padding: 13px; }
+  .board-topline { align-items: flex-start; flex-direction: column; }
+  .board-topline > span { text-align: left; }
+}
+.provenance-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.provenance-summary div { padding: 8px; border: 1px solid rgba(139, 92, 246, .3); border-radius: 7px; background: rgba(22, 11, 42, .7); }
+.provenance-summary span, .provenance-summary b { display: block; }
+.provenance-summary span { color: #C084FC; font-size: 8px; text-transform: uppercase; letter-spacing: .06em; }
+.provenance-summary b { margin-top: 3px; color: #F5F3FF; font-size: 11px; }
+@media (max-width: 440px) { .provenance-summary { grid-template-columns: 1fr 1fr; } }
