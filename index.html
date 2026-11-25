@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="KUBERA AI web edition: a bounded agent workforce that turns local business records into PPTX, DOCX and XLSX files.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>KUBERA AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Fira+Sans:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap">
+<style>
+/* Layout: command workspace — sidebar rail on desktop, scrollable tab strip on phones; dense operator UI, gold reserved for money */
+:root{
+  --bg:#F3F5FA; --surface:#FFFFFF; --surface-2:#EBEFF8; --line:#D6DDEB; --line-strong:#B9C3DA;
+  --fg:#0E1630; --muted:#5A6684; --dim:#8590AC;
+  --accent:#2347D9; --accent-weak:#E2E8FF; --on-accent:#FFFFFF;
+  --gold:#8F620C; --gold-weak:#FBF0D6;
+  --ok:#127A4E; --ok-weak:#DDF4E9; --warn:#9A5600; --warn-weak:#FDEED7; --bad:#BE2A3A; --bad-weak:#FCE3E6;
+  --shadow:0 8px 28px -12px rgba(14,22,48,.28);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Fira Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"Fira Code",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --t-pptx:#B4461A; --t-docx:#2457B8; --t-xlsx:#157043;
+  --ease:cubic-bezier(.2,.7,.2,1); --dur:160ms; --tap:44px; --nav-h:64px;
+  --r:10px; --r-lg:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#070B18; --surface:#0E1426; --surface-2:#151D35; --line:#222C48; --line-strong:#33405F;
+  --fg:#E8ECF8; --muted:#8E99B8; --dim:#5F6A88;
+  --accent:#7590FF; --accent-weak:#18234A; --on-accent:#070B18;
+  --gold:#E4B556; --gold-weak:#2C2410;
+  --ok:#41CE8E; --ok-weak:#0F2A20; --warn:#F2A63E; --warn-weak:#2E2010; --bad:#FF6F7D; --bad-weak:#33141A;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.7); --t-pptx:#F08A5D; --t-docx:#7AA7FF; --t-xlsx:#4FD18B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#070B18; --surface:#0E1426; --surface-2:#151D35; --line:#222C48; --line-strong:#33405F;
+  --fg:#E8ECF8; --muted:#8E99B8; --dim:#5F6A88;
+  --accent:#7590FF; --accent-weak:#18234A; --on-accent:#070B18;
+  --gold:#E4B556; --gold-weak:#2C2410;
+  --ok:#41CE8E; --ok-weak:#0F2A20; --warn:#F2A63E; --warn-weak:#2E2010; --bad:#FF6F7D; --bad-weak:#33141A;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.7); --t-pptx:#F08A5D; --t-docx:#7AA7FF; --t-xlsx:#4FD18B; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h1{font-size:1.75rem;line-height:1.15} h2{font-size:1.15rem} h3{font-size:1rem}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .gold{color:var(--gold)}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+
+/* shell */
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:18px;padding:20px 14px;padding-left:max(14px,env(safe-area-inset-left,0px))}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px}
+.coin{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 17px var(--f-display);color:var(--gold);background:var(--gold-weak);box-shadow:inset 0 0 0 2px var(--gold)}
+.brand b{font:700 1.05rem var(--f-display);letter-spacing:.06em}
+.brand small{display:block;font-size:.7rem;color:var(--muted);letter-spacing:.02em}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{transition:background-color var(--dur) var(--ease),color var(--dur);display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:500;white-space:nowrap}
+.nav a:hover{background:var(--surface-2);color:var(--fg)}
+.nav a[aria-current="page"]{background:var(--accent-weak);color:var(--accent)}
+.badge{font:500 .7rem var(--f-mono);padding:1px 7px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.nav a[aria-current="page"] .badge{background:var(--surface);color:var(--accent)}
+.badge.hot{background:var(--warn-weak);color:var(--warn)}
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:.8rem}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding-block:12px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.topbar .grow{flex:1;min-width:0}
+.mobile-brand{display:none}
+.tabs{display:none}
+@media (pointer:coarse){.btn,.seg button,.tpl{min-height:var(--tap)}.cmd{min-height:var(--tap);align-items:center}}
+.content{padding-block:22px 64px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px;max-width:1240px;width:100%}
+.engine{max-width:100%;overflow:hidden;text-overflow:ellipsis;display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);padding:5px 10px;border:1px solid var(--line);border-radius:99px;background:var(--surface);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.dot.busy{background:var(--accent);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* controls */
+.btn{transition:background-color var(--dur) var(--ease),border-color var(--dur) var(--ease),color var(--dur) var(--ease),filter var(--dur);display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line-strong);background:var(--surface);padding:8px 13px;border-radius:8px;font-weight:500;cursor:pointer;white-space:nowrap;text-decoration:none;color:var(--fg)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--on-accent)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--bad)} .btn.danger:hover{border-color:var(--bad)}
+.btn.sm{padding:5px 9px;font-size:.82rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn[aria-busy="true"]{cursor:progress;opacity:.75}
+.btn[aria-busy="true"] .ico{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ico{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.nav .ico{width:18px;height:18px}
+.nav a .lbl{display:flex;align-items:center;gap:10px}
+.icon-btn{padding:8px;min-width:36px}
+.err{color:var(--bad);font-size:.8rem;font-weight:500}
+[aria-invalid="true"]{border-color:var(--bad)!important;box-shadow:0 0 0 3px var(--bad-weak)}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bottomnav{display:none}
+kbd{font:500 .72rem var(--f-mono);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--muted)}
+input[type=text],input[type=number],input[type=search],select,textarea{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span{font-size:.8rem;color:var(--muted);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.spacer{flex:1}
+
+/* surfaces */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--ok-weak);color:var(--ok)} .chip.warn{background:var(--warn-weak);color:var(--warn)}
+.chip.bad{background:var(--bad-weak);color:var(--bad)} .chip.info{background:var(--accent-weak);color:var(--accent)}
+.chip.gold{background:var(--gold-weak);color:var(--gold)}
+.type{font:600 .7rem var(--f-mono);padding:2px 6px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase;border:1px solid currentColor}
+.type.pptx{color:var(--t-pptx)} .type.docx{color:var(--t-docx)} .type.xlsx{color:var(--t-xlsx)}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi b{font:700 1.5rem var(--f-display);font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi small{color:var(--muted);font-size:.78rem}
+
+/* composer */
+.composer textarea{font-size:1.02rem;min-height:84px;border-radius:10px;padding:12px}
+.templates{display:flex;gap:8px;flex-wrap:wrap}
+.tpl{transition:color var(--dur),border-color var(--dur);border:1px dashed var(--line-strong);background:transparent;border-radius:99px;padding:5px 11px;font-size:.82rem;color:var(--muted);cursor:pointer}
+.tpl:hover{color:var(--accent);border-color:var(--accent)}
+.ai-note{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.switch{position:relative;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem}
+.switch input{appearance:none;width:34px;height:20px;border-radius:99px;background:var(--line-strong);position:relative;cursor:pointer;transition:background .2s;margin:0;flex:none}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--surface);transition:transform .2s}
+.switch input:checked{background:var(--accent)} .switch input:checked::after{transform:translateX(14px)}
+
+/* task graph */
+.graph{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);align-items:center;gap:6px;overflow-x:auto}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.arrow{color:var(--dim);text-align:center;font-family:var(--f-mono)}
+.node{border:1px solid var(--line);border-radius:var(--r);padding:10px 11px;background:var(--surface);display:flex;flex-direction:column;gap:6px;min-width:0;transition:border-color .3s,box-shadow .3s}
+.node.running{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-weak)}
+.node.succeeded,.node.approved{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.node.failed,.node.blocked{border-color:var(--bad)}
+.node-top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.avatar{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font:700 .72rem var(--f-mono);flex:none;color:var(--surface)}
+.who{display:flex;gap:8px;align-items:center;min-width:0}
+.who b{font-size:.88rem;display:block;line-height:1.2}
+.who small{font-size:.72rem;color:var(--muted);display:block;line-height:1.2}
+.node p{font-size:.8rem;color:var(--muted);line-height:1.4}
+.progress{height:4px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .4s}
+.handoffs{display:flex;gap:8px;flex-wrap:wrap}
+.handoff{font:500 .75rem var(--f-mono);border:1px solid var(--line);border-radius:7px;padding:4px 8px;color:var(--muted)}
+.handoff.accepted{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+
+/* lists */
+.list{display:flex;flex-direction:column}
+.item{display:flex;gap:12px;align-items:center;padding:11px 2px;border-top:1px solid var(--line);min-width:0}
+.item:first-child{border-top:0}
+.item .body{flex:1;min-width:0}
+@media (max-width:640px){.item{flex-wrap:wrap}.item .body{flex-basis:calc(100% - 80px)}}
+.item .title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .sub{font-size:.8rem;color:var(--muted)}
+.feed .item{align-items:flex-start}
+.tone{width:7px;height:7px;border-radius:50%;margin-top:8px;flex:none;background:var(--dim)}
+.tone.success{background:var(--ok)} .tone.info{background:var(--accent)} .tone.warn{background:var(--warn)} .tone.danger{background:var(--bad)}
+.empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:.9rem}
+
+/* tables */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{text-align:left;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2);padding:9px 12px;white-space:nowrap;cursor:default}
+th.sort{cursor:pointer} th.sort:hover{color:var(--accent)}
+td{padding:9px 12px;border-top:1px solid var(--line);white-space:nowrap}
+td.r,th.r{text-align:right}
+tr:hover td{background:color-mix(in srgb,var(--surface-2) 55%,transparent)}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:6px 12px;cursor:pointer;color:var(--muted);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent-weak);color:var(--accent)}
+
+/* reports */
+.reports{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.report{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);padding:15px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.report .fname{font:500 .82rem var(--f-mono);word-break:break-all}
+.report ol{margin:0;padding-left:18px;font-size:.82rem;color:var(--muted)}
+
+/* agents */
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.agent{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);padding:15px;display:flex;flex-direction:column;gap:10px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool{font:.72rem var(--f-mono);padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.guard{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.guard div{display:flex;gap:10px;align-items:flex-start;font-size:.86rem}
+.guard i{font-style:normal;color:var(--ok);display:inline-flex;margin-top:2px}
+
+/* chart */
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:.83rem}
+.bar-track{height:12px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.bar-track i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.bar-track i.w{background:var(--gold)}
+
+/* modal + palette + toast */
+.scrim{position:fixed;inset:0;background:rgba(5,8,18,.55);display:grid;place-items:center;z-index:50;padding-block:max(20px,env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);width:min(640px,100%);max-height:100%;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.modal .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .form .full{grid-column:1/-1}
+.palette{width:min(560px,100%);padding:10px;gap:6px;align-self:start;margin-top:8vh}
+.palette input{font-size:1rem;padding:11px 12px}
+.cmd{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:8px;cursor:pointer}
+.cmd[aria-selected="true"]{background:var(--accent-weak);color:var(--accent)}
+.cmd small{color:var(--muted)}
+.toasts{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:60;max-width:calc(100% - 32px)}
+.toast{background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:10px;font-size:.88rem;box-shadow:var(--shadow);animation:rise .25s ease}
+@keyframes rise{from{transform:translateY(8px);opacity:.4}}
+.checks{display:flex;flex-direction:column;gap:6px;font-size:.86rem}
+.checks div{display:flex;gap:8px}
+.notice{font-size:.84rem;border-radius:10px;padding:10px 12px;background:var(--surface-2);color:var(--muted)}
+.notice.warn{background:var(--warn-weak);color:var(--warn)}
+
+@media (max-width:1000px){.grid2{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{display:none}
+  .mobile-brand{display:flex}
+  .topbar{flex-wrap:wrap;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 0;gap:8px}
+  .topbar{padding-block:10px}
+  .bottomnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+  .bottomnav a,.bottomnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:var(--nav-h);background:none;border:0;color:var(--muted);text-decoration:none;font-size:.72rem;font-weight:500;cursor:pointer;position:relative;transition:color var(--dur)}
+  .bottomnav .ico{width:22px;height:22px}
+  .bottomnav [aria-current="page"]{color:var(--accent)}
+  .bottomnav [aria-current="page"]::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+  .bottomnav .pip{position:absolute;top:9px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:99px;background:var(--warn);color:var(--surface);font:600 .65rem var(--f-mono);display:grid;place-items:center;padding:0 4px}
+  .toasts{bottom:calc(var(--nav-h) + 12px + env(safe-area-inset-bottom,0px))}
+  .content{padding-bottom:calc(var(--nav-h) + 32px + env(safe-area-inset-bottom,0px))!important}
+  .btn,.seg button,.tpl,select,input[type=text],input[type=number],input[type=search]{min-height:var(--tap)}
+  .btn.sm{padding:8px 12px;font-size:.86rem}
+  .switch{min-height:var(--tap)}
+  .theme-lbl,.search-lbl{display:none}
+  .cards table,.cards tbody,.cards tr,.cards td{display:block;width:100%}
+  .cards thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .cards tr{border-top:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+  .cards tr:first-child{border-top:0}
+  .cards td{border:0;padding:0;white-space:normal;text-align:left!important;min-width:0}
+  .cards td[data-label]::before{content:attr(data-label);display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .cards td.primary{grid-column:1/-1;font-weight:600;font-size:.95rem}
+  .cards td.act{grid-column:1/-1;text-align:right!important}
+  .cards tr:hover td{background:none}
+  .table-wrap.cards{overflow:visible}
+  .content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 60px}
+  .graph{grid-template-columns:minmax(0,1fr);}
+  .arrow{transform:rotate(90deg);line-height:1}
+  .modal .form{grid-template-columns:1fr}
+  .hide-sm{display:none}
+  .bar-row{grid-template-columns:80px minmax(0,1fr) auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-missions" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-workforce" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-reports" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+<symbol id="i-records" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></symbol>
+<symbol id="i-schedules" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-audit" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></symbol>
+<symbol id="i-workspace" viewBox="0 0 24 24"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+<symbol id="i-auto" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m7 4 13 8-13 8z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></symbol>
+<symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.55"/></symbol>
+</defs></svg>
+<div class="shell">
+  <aside class="rail" aria-label="Main navigation">
+    <div class="brand"><div class="coin">K</div><div><b>KUBERA AI</b><small>Business operations workspace</small></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="rail-foot">
+      <button class="btn sm" id="paletteBtn2" type="button"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>Command menu <kbd>Ctrl K</kbd></button>
+      <span class="muted">Local-first · browser storage</span>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="brand mobile-brand"><div class="coin">K</div><b>KUBERA</b></div>
+      <div class="grow"><span class="engine" id="engine" role="status" aria-live="polite"><span class="dot"></span>Workforce ready</span></div>
+      <button class="btn sm" id="paletteBtn" type="button" aria-label="Search and commands"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><span class="search-lbl">Search</span> <kbd class="hide-sm">Ctrl K</kbd></button>
+      <button class="btn sm" id="themeBtn" type="button" aria-label="Switch theme"></button>
+    </header>
+    <main class="content" id="view"></main>
+  </div>
+</div>
+<nav class="bottomnav" id="bottomnav" aria-label="Sections"></nav>
+<div id="layer"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+<script>
+(() => {
+'use strict';
+/* ---------- utilities ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = p => p + '-' + Math.random().toString(36).slice(2, 9);
+const KEY = 'kubera.workspace.v2';
+const STAGES = ['Discovery','Proposal','Negotiation','Closed Won','Closed Lost'];
+const WIN = {Discovery:.2, Proposal:.4, Negotiation:.7, 'Closed Won':1, 'Closed Lost':0};
+const now = () => Date.now();
+
+/* ---------- seed ---------- */
+function seed() {
+  const t = now(), ago = m => t - m * 60000;
+  return {
+    version: 2,
+    settings: { currency: 'USD', ai: true, theme: 'system', speed: 'normal', owner: 'Operations team' },
+    clients: [
+      { id:'c-acme', name:'Acme Corp', industry:'Enterprise SaaS', status:'active', owner:'Priya Shah' },
+      { id:'c-north', name:'Northstar Health', industry:'Healthcare', status:'active', owner:'Daniel Reed' },
+      { id:'c-meridian', name:'Meridian Retail', industry:'Retail', status:'prospect', owner:'Priya Shah' },
+      { id:'c-orion', name:'Orion Logistics', industry:'Logistics', status:'active', owner:'Kiran Rao' },
+      { id:'c-saffron', name:'Saffron Foods', industry:'FMCG', status:'paused', owner:'Kiran Rao' }
+    ],
+    projects: [
+      { id:'p1', clientId:'c-acme', name:'Q3 Platform Expansion', stage:'Proposal', value:240000, risk:false },
+      { id:'p2', clientId:'c-acme', name:'Analytics Modernization', stage:'Negotiation', value:125000, risk:true },
+      { id:'p3', clientId:'c-north', name:'Patient Portal Discovery', stage:'Discovery', value:80000, risk:false },
+      { id:'p4', clientId:'c-north', name:'Claims Automation', stage:'Negotiation', value:190000, risk:false },
+      { id:'p5', clientId:'c-meridian', name:'Store Ops Dashboard', stage:'Discovery', value:62000, risk:false },
+      { id:'p6', clientId:'c-orion', name:'Fleet Telemetry Rollout', stage:'Closed Won', value:310000, risk:false },
+      { id:'p7', clientId:'c-orion', name:'Warehouse Slotting Pilot', stage:'Proposal', value:95000, risk:true },
+      { id:'p8', clientId:'c-saffron', name:'Distributor Portal', stage:'Closed Lost', value:70000, risk:false }
+    ],
+    agents: [
+      { id:'a-mgr', name:'Asha', role:'Manager', kind:'manager', color:'#7A5AF8', capability:'Plans a bounded team. Cannot spawn agents directly.', tools:['task_planning','scope_check'] },
+      { id:'a-mkt', name:'Maya', role:'Market Analyst', kind:'market', color:'#2F6FDB', capability:'Reads selected records, writes findings.', tools:['read_records','market_signals'] },
+      { id:'a-mkt2', name:'Maya-2', role:'Market Analyst', kind:'market', color:'#2F6FDB', capability:'Reads selected records, writes findings.', tools:['read_records','market_signals'] },
+      { id:'a-ops', name:'W-1', role:'Operations Analyst', kind:'ops', color:'#0E9AA7', capability:'Computes pipeline metrics locally.', tools:['read_records','pipeline_math'] },
+      { id:'a-ops2', name:'W-1B', role:'Operations Analyst', kind:'ops', color:'#0E9AA7', capability:'Computes pipeline metrics locally.', tools:['read_records','pipeline_math'] },
+      { id:'a-doc', name:'W-2', role:'Document Worker', kind:'doc', color:'#C8862A', capability:'Writes PPTX, DOCX or XLSX only.', tools:['pptx_writer','docx_writer','xlsx_writer'] },
+      { id:'a-doc2', name:'W-2B', role:'Document Worker', kind:'doc', color:'#C8862A', capability:'Writes PPTX, DOCX or XLSX only.', tools:['pptx_writer','docx_writer','xlsx_writer'] },
+      { id:'a-rev', name:'Sentinel', role:'File Reviewer', kind:'review', color:'#D14A64', capability:'Validates file, type and provenance.', tools:['package_check','provenance_check'] }
+    ],
+    missions: [{
+      id:'m-seed', text:'Build a Q3 pipeline deck for Acme Corp', title:'Acme Corp Q3 pipeline deck', type:'pptx', clientIds:['c-acme'],
+      status:'done', createdAt:ago(135), updatedAt:ago(128), reportId:'r-seed', ai:false, source:'manual',
+      tasks:[
+        { key:'manager', agentId:'a-mgr', title:'Plan a bounded delivery team', status:'succeeded', summary:'Deployed Maya, W-1, W-2 and Sentinel. Recursive spawning disabled.' },
+        { key:'market', agentId:'a-mkt', title:'Assess opportunity and risk', status:'succeeded', summary:'Flagged 1 at-risk project and 2 executive themes.' },
+        { key:'ops', agentId:'a-ops', title:'Prepare pipeline metrics', status:'succeeded', summary:'Reconciled $365,000 across 2 projects.' },
+        { key:'doc', agentId:'a-doc', title:'Create board deck', status:'succeeded', summary:'Wrote a 6-slide PPTX.' },
+        { key:'review', agentId:'a-rev', title:'Validate artifact', status:'approved', summary:'4 of 4 checks passed.' }
+      ],
+      handoffs:[{ type:'market_analysis', from:'Maya', sources:2, status:'accepted' },{ type:'pipeline_metrics', from:'W-1', sources:2, status:'accepted' }]
+    }],
+    reports: [],
+    schedules: [
+      { id:'s1', prompt:'Build the monthly Acme pipeline board deck', type:'pptx', cron:'0 9 1 * *', enabled:true, lastRun:ago(43800) },
+      { id:'s2', prompt:'Export a weekly pipeline workbook for all clients', type:'xlsx', cron:'30 8 * * 1', enabled:false, lastRun:null }
+    ],
+    activity: [
+      { id:'e1', at:ago(128), kind:'validate_output', tone:'success', text:'Sentinel approved the Acme Corp Q3 pipeline deck.' },
+      { id:'e2', at:ago(129), kind:'create_file', tone:'info', text:'W-2 wrote acme-corp_q3-pipeline-deck.pptx to the Report Center.' },
+      { id:'e3', at:ago(131), kind:'consume_handoff', tone:'info', text:'W-2 consumed market_analysis and pipeline_metrics handoffs.' },
+      { id:'e4', at:ago(133), kind:'query_records', tone:'neutral', text:'Maya and W-1 read 2 Acme Corp project records.' },
+      { id:'e5', at:ago(135), kind:'deploy_team', tone:'neutral', text:'Asha deployed a 4-agent team for "Build a Q3 pipeline deck for Acme Corp".' }
+    ]
+  };
+}
+function seedReport(st) {
+  const m = st.missions[0];
+  const c = buildContent(st, m, null);
+  st.reports.push({ id:'r-seed', missionId:m.id, name:fileName(m.title,'pptx', st.missions[0].createdAt), type:'pptx', createdAt:m.updatedAt,
+    size:null, producer:'W-2', approval:'approved', feedback:'', content:c, outline:outlineFor('pptx', c), checks:null, sources:c.sourceIds });
+}
+
+let S;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+/* ---------- formatting ---------- */
+const money = (v, compact) => new Intl.NumberFormat(S.settings.currency === 'INR' ? 'en-IN' : 'en-US',
+  { style:'currency', currency:S.settings.currency, maximumFractionDigits: compact ? 1 : 0, notation: compact ? 'compact' : 'standard' }).format(v || 0);
+const ago = ts => { if (!ts) return '—'; const d = (now() - ts) / 1000; const f = Math.abs(d);
+  const s = f < 60 ? Math.round(f) + 's' : f < 3600 ? Math.round(f/60) + 'm' : f < 86400 ? Math.round(f/3600) + 'h' : Math.round(f/86400) + 'd';
+  return d >= 0 ? s + ' ago' : 'in ' + s; };
+const when = ts => ts ? new Date(ts).toLocaleString(undefined, { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48);
+const fileName = (title, type, ts) => `${slug(title)}_${new Date(ts || now()).toISOString().slice(0,10)}.${type}`;
+const clientName = id => S.clients.find(c => c.id === id)?.name || 'Unknown client';
+const agent = id => S.agents.find(a => a.id === id);
+const bytes = n => n == null ? '' : n < 1024 ? n + ' B' : n < 1048576 ? (n/1024).toFixed(1) + ' KB' : (n/1048576).toFixed(2) + ' MB';
+const ico = (n, cls = 'ico') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+function setErr(input, msg) { const id = input.id + '-err'; let e = document.getElementById(id); if (!msg) { input.removeAttribute('aria-invalid'); input.removeAttribute('aria-describedby'); e && e.remove(); return false; } if (!e) { e = document.createElement('p'); e.id = id; e.className = 'err'; (input.closest('.field') || input.parentElement).appendChild(e); } e.textContent = msg; input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', id); input.focus(); return true; }
+const clearErrOnInput = el => $$('input,textarea,select', el).forEach(i => i.addEventListener('input', () => i.getAttribute('aria-invalid') && setErr(i, null)));
+async function busy(btn, label, fn) { if (!btn || btn.getAttribute('aria-busy') === 'true') return; const html = btn.innerHTML; btn.setAttribute('aria-busy', 'true'); btn.disabled = true; btn.innerHTML = ico('loader') + label; try { await fn(); } finally { btn.removeAttribute('aria-busy'); btn.disabled = false; btn.innerHTML = html; } }
+const initials = n => n.replace(/[^A-Za-z0-9]/g,'').slice(0,2).toUpperCase();
+
+/* ---------- capabilities ---------- */
+let DL = null, AI = null;
+if (window.claude?.use) {
+  claude.use('downloads').then(d => { DL = d; refresh(); }).catch(() => {});
+  claude.use('sample').then(s => { AI = s; refresh(); }).catch(() => {});
+}
+async function offerFile(name, blob) {
+  if (DL) {
+    try { await DL.save({ filename:name, data:blob }); toast('Saved ' + name); }
+    catch (e) { if (e?.code === 'declined') toast('Download cancelled'); else if (e?.code === 'rate_limited') toast('A save prompt is already open'); else toast('Downloads are not available here'); }
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+
+/* ---------- toast / activity ---------- */
+function toast(msg) { const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; $('#toasts').appendChild(el); setTimeout(() => el.remove(), 3400); }
+function log(kind, tone, text, missionId) { S.activity.unshift({ id:uid('e'), at:now(), kind, tone, text, missionId }); if (S.activity.length > 400) S.activity.length = 400; }
+
+/* ---------- analytics (local, deterministic) ---------- */
+function metricsFor(projects) {
+  const live = projects.filter(p => p.stage !== 'Closed Lost');
+  const total = live.reduce((a, p) => a + p.value, 0);
+  const weighted = projects.reduce((a, p) => a + p.value * (WIN[p.stage] ?? 0), 0);
+  const byStage = STAGES.map(s => ({ stage:s, value:projects.filter(p => p.stage === s).reduce((a,p) => a + p.value, 0), count:projects.filter(p => p.stage === s).length }));
+  const risk = projects.filter(p => p.risk && !p.stage.startsWith('Closed'));
+  const open = projects.filter(p => !p.stage.startsWith('Closed')).sort((a,b) => b.value - a.value);
+  const byClient = {}; live.forEach(p => byClient[p.clientId] = (byClient[p.clientId] || 0) + p.value);
+  const topClient = Object.entries(byClient).sort((a,b) => b[1] - a[1])[0];
+  return { total, weighted, byStage, risk, riskValue:risk.reduce((a,p)=>a+p.value,0), open, count:projects.length, won:byStage[3].value,
+    avg: live.length ? total / live.length : 0, topClient: topClient ? { name:clientName(topClient[0]), value:topClient[1], share: total ? topClient[1]/total : 0 } : null };
+}
+
+/* ---------- mission parsing ---------- */
+function detectType(text) {
+  const t = text.toLowerCase();
+  if (/\b(sheet|spreadsheet|excel|xlsx|workbook|table|tracker)\b/.test(t)) return 'xlsx';
+  if (/\b(report|memo|docx|word|brief|letter|summary document|proposal doc)\b/.test(t)) return 'docx';
+  return 'pptx';
+}
+function detectClients(text) {
+  const t = text.toLowerCase();
+  const hit = S.clients.filter(c => t.includes(c.name.toLowerCase()) || t.includes(c.name.split(' ')[0].toLowerCase()));
+  return hit.map(c => c.id);
+}
+function titleFrom(text, type, clientIds) {
+  const scope = clientIds.length === 1 ? clientName(clientIds[0]) : clientIds.length ? clientIds.length + '-client' : 'Portfolio';
+  const q = (text.match(/\bQ[1-4]\b/i) || [''])[0].toUpperCase();
+  const noun = { pptx:'pipeline deck', docx:'account report', xlsx:'pipeline workbook' }[type];
+  return [scope, q, noun].filter(Boolean).join(' ');
+}
+
+/* ---------- content ---------- */
+function buildContent(st, m, ai) {
+  const ids = m.clientIds.length ? m.clientIds : st.clients.map(c => c.id);
+  const projects = st.projects.filter(p => ids.includes(p.clientId));
+  const k = metricsFor(projects);
+  const scope = m.clientIds.length === 1 ? clientName(m.clientIds[0]) : m.clientIds.length ? m.clientIds.map(clientName).join(', ') : 'All clients';
+  const findings = [
+    `Weighted pipeline is ${money(k.weighted)}, ${k.total ? Math.round(k.weighted / k.total * 100) : 0}% of the ${money(k.total)} gross pipeline.`,
+    k.risk.length ? `${k.risk.length} at-risk project${k.risk.length>1?'s':''} worth ${money(k.riskValue)}: ${k.risk.map(p=>p.name).join(', ')}.` : 'No open projects are flagged at risk.',
+    k.open[0] ? `Largest open opportunity is ${k.open[0].name} (${clientName(k.open[0].clientId)}) at ${money(k.open[0].value)}.` : 'No open opportunities in scope.'
+  ];
+  if (k.topClient && ids.length > 1) findings.push(`${k.topClient.name} holds ${Math.round(k.topClient.share*100)}% of live pipeline, a concentration to watch.`);
+  const actions = [
+    k.risk[0] ? `Assign a recovery owner to ${k.risk[0].name} this week and confirm a decision date.` : 'Keep weekly risk review in place to catch slippage early.',
+    k.byStage[1].count ? `Push ${k.byStage[1].count} Proposal-stage deal${k.byStage[1].count>1?'s':''} (${money(k.byStage[1].value)}) toward Negotiation with pricing sign-off.` : 'Build proposal coverage; no deals sit in Proposal.',
+    k.byStage[0].count ? `Qualify ${k.byStage[0].count} Discovery project${k.byStage[0].count>1?'s':''} or close them out by month end.` : 'Refill top of funnel; Discovery is empty.'
+  ];
+  return {
+    title: m.title, prompt: m.text, scope, createdAt: m.updatedAt || now(),
+    headline: ai?.headline || `${scope}: ${money(k.total)} live pipeline, ${money(k.weighted)} weighted`,
+    summary: ai?.summary || `${scope} carries ${money(k.total)} in live pipeline across ${k.count} project${k.count===1?'':'s'}. Probability-weighted value is ${money(k.weighted)}. ${k.risk.length ? k.risk.length + ' project' + (k.risk.length>1?'s are':' is') + ' flagged at risk.' : 'Nothing is flagged at risk.'}`,
+    findings: ai?.findings?.length ? ai.findings.slice(0,4) : findings,
+    actions: ai?.actions?.length ? ai.actions.slice(0,4) : actions,
+    aiWritten: !!ai,
+    metrics: { total:k.total, weighted:k.weighted, riskValue:k.riskValue, avg:k.avg, won:k.won, count:k.count },
+    byStage: k.byStage,
+    rows: projects.map(p => ({ id:p.id, name:p.name, client:clientName(p.clientId), stage:p.stage, value:p.value, risk:p.risk, prob:WIN[p.stage] })),
+    sourceIds: projects.map(p => p.id).concat(ids),
+    currency: st.settings.currency
+  };
+}
+function outlineFor(type, c) {
+  if (type === 'pptx') return ['Title — ' + c.title, 'Executive overview', 'Pipeline by stage', 'Open opportunities', 'Findings and risks', 'Recommended actions'];
+  if (type === 'docx') return ['Executive summary', 'Key metrics', 'Findings', 'Project detail', 'Recommended actions', 'Provenance'];
+  return ['Summary sheet', 'Projects (with SUM formulas)', 'By stage (SUMIF formulas)', 'Actions'];
+}
+
+/* ---------- Office writers ---------- */
+async function buildFile(type, c) {
+  if (type === 'pptx') return buildPptx(c);
+  if (type === 'docx') return buildDocx(c);
+  return buildXlsx(c);
+}
+const fmtMoney = (v, cur) => new Intl.NumberFormat(cur === 'INR' ? 'en-IN' : 'en-US', { style:'currency', currency:cur, maximumFractionDigits:0 }).format(v);
+async function buildPptx(c) {
+  if (!window.PptxGenJS) throw new Error('Presentation writer did not load');
+  const p = new PptxGenJS(); p.layout = 'LAYOUT_WIDE'; p.title = c.title; p.company = 'KUBERA AI';
+  const INK='0E1630', COB='2347D9', GOLD='C8962E', MUT='5A6684', F='Arial';
+  const head = (s, t, n) => {
+    s.background = { color:'FFFFFF' };
+    s.addShape(p.ShapeType.rect, { x:0, y:0, w:13.33, h:0.12, fill:{ color:COB } });
+    s.addText(t, { x:0.6, y:0.35, w:10, h:0.7, fontSize:28, bold:true, color:INK, fontFace:F });
+    s.addText(`KUBERA AI · ${c.scope} · ${n}`, { x:0.6, y:6.95, w:12, h:0.3, fontSize:10, color:MUT, fontFace:F });
+  };
+  let s = p.addSlide(); s.background = { color:INK };
+  s.addShape(p.ShapeType.ellipse, { x:0.6, y:0.6, w:0.6, h:0.6, fill:{ color:INK }, line:{ color:GOLD, width:2 } });
+  s.addText('K', { x:0.6, y:0.6, w:0.6, h:0.6, align:'center', fontSize:20, bold:true, color:GOLD, fontFace:F });
+  s.addText('KUBERA AI · BOARD DECK', { x:1.4, y:0.68, w:8, h:0.45, fontSize:13, color:GOLD, fontFace:F, charSpacing:3 });
+  s.addText(c.title, { x:0.6, y:2.3, w:12, h:1.3, fontSize:42, bold:true, color:'FFFFFF', fontFace:F });
+  s.addText(c.headline, { x:0.6, y:3.7, w:11.5, h:0.8, fontSize:18, color:'C9D3F2', fontFace:F });
+  s.addText(new Date(c.createdAt).toDateString() + ' · Generated from local records', { x:0.6, y:6.6, w:10, h:0.4, fontSize:12, color:'8E99B8', fontFace:F });
+
+  s = p.addSlide(); head(s, 'Executive overview', 2);
+  s.addText(c.summary, { x:0.6, y:1.25, w:12, h:1.2, fontSize:17, color:INK, fontFace:F, valign:'top' });
+  const kp = [['Live pipeline', c.metrics.total], ['Weighted', c.metrics.weighted], ['At risk', c.metrics.riskValue], ['Closed won', c.metrics.won]];
+  kp.forEach(([l, v], i) => {
+    const x = 0.6 + i * 3.05;
+    s.addShape(p.ShapeType.roundRect, { x, y:2.9, w:2.85, h:1.7, fill:{ color:'F3F5FA' }, line:{ color:'D6DDEB' }, rectRadius:0.08 });
+    s.addText(l.toUpperCase(), { x:x+0.2, y:3.05, w:2.5, h:0.35, fontSize:11, color:MUT, fontFace:F, bold:true });
+    s.addText(fmtMoney(v, c.currency), { x:x+0.2, y:3.45, w:2.5, h:0.8, fontSize:24, bold:true, color: i===2 ? 'BE2A3A' : i===0 ? '8F620C' : INK, fontFace:F });
+  });
+  s.addText(`${c.metrics.count} projects in scope · average live deal ${fmtMoney(c.metrics.avg, c.currency)}`, { x:0.6, y:4.9, w:12, h:0.4, fontSize:13, color:MUT, fontFace:F });
+
+  s = p.addSlide(); head(s, 'Pipeline by stage', 3);
+  s.addChart(p.ChartType.bar, [{ name:'Value', labels:c.byStage.map(b=>b.stage), values:c.byStage.map(b=>b.value) }],
+    { x:0.6, y:1.2, w:12, h:5.4, barDir:'bar', chartColors:[COB], catAxisLabelFontSize:13, valAxisLabelFontSize:11, showValue:true, dataLabelFontSize:11, valAxisLabelFormatCode:'#,##0', dataLabelFormatCode:'#,##0', valGridLine:{ color:'E6EAF3', size:0.5 } });
+
+  s = p.addSlide(); head(s, 'Open opportunities', 4);
+  const open = c.rows.filter(r => !r.stage.startsWith('Closed')).sort((a,b)=>b.value-a.value).slice(0,9);
+  const hdr = ['Project','Client','Stage','Value','Win %','Risk'].map(t => ({ text:t, options:{ bold:true, color:'FFFFFF', fill:{ color:INK } } }));
+  s.addTable([hdr, ...open.map(r => [r.name, r.client, r.stage, { text:fmtMoney(r.value, c.currency), options:{ align:'right' } }, { text:Math.round(r.prob*100)+'%', options:{ align:'right' } }, { text:r.risk?'At risk':'—', options:{ color:r.risk?'BE2A3A':MUT } }])],
+    { x:0.6, y:1.25, w:12.1, colW:[3.4,2.6,1.8,1.8,1.1,1.4], fontSize:13, fontFace:F, color:INK, border:{ type:'solid', color:'D6DDEB', pt:0.75 }, rowH:0.45 });
+
+  s = p.addSlide(); head(s, 'Findings and risks', 5);
+  s.addText(c.findings.map(f => ({ text:f, options:{ bullet:true, breakLine:true } })), { x:0.6, y:1.3, w:12, h:5, fontSize:18, color:INK, fontFace:F, valign:'top', paraSpaceAfter:14 });
+
+  s = p.addSlide(); head(s, 'Recommended actions', 6);
+  s.addText(c.actions.map(a => ({ text:a, options:{ bullet:{ type:'number' }, breakLine:true } })), { x:0.6, y:1.3, w:12, h:4.6, fontSize:18, color:INK, fontFace:F, valign:'top', paraSpaceAfter:14 });
+  s.addText(`Sources: ${c.rows.length} project records${c.aiWritten ? ' · narrative drafted by Claude, figures computed locally' : ''}`, { x:0.6, y:6.4, w:12, h:0.4, fontSize:11, color:MUT, fontFace:F });
+  return p.write({ outputType:'blob' });
+}
+async function buildDocx(c) {
+  if (!window.docx) throw new Error('Document writer did not load');
+  const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType } = window.docx;
+  const cell = (t, o = {}) => new TableCell({ children:[new Paragraph({ alignment:o.right ? AlignmentType.RIGHT : AlignmentType.LEFT, children:[new TextRun({ text:String(t), bold:!!o.bold })] })] });
+  const table = rows => new Table({ width:{ size:100, type:WidthType.PERCENTAGE }, rows: rows.map((r, i) => new TableRow({ children: r.map((t, j) => cell(t, { bold:i===0, right: j>0 && typeof t === 'string' && /[\d%]$/.test(t) && i>0 })) })) });
+  const H = (t, l = HeadingLevel.HEADING_1) => new Paragraph({ text:t, heading:l, spacing:{ before:240, after:120 } });
+  const doc = new Document({ creator:'KUBERA AI', title:c.title, sections:[{ children:[
+    new Paragraph({ children:[new TextRun({ text:'KUBERA AI · ACCOUNT REPORT', bold:true, color:'8F620C', size:20 })] }),
+    new Paragraph({ text:c.title, heading:HeadingLevel.TITLE }),
+    new Paragraph({ children:[new TextRun({ text:`${c.scope} · ${new Date(c.createdAt).toDateString()}`, color:'5A6684' })] }),
+    H('Executive summary'), new Paragraph(c.headline), new Paragraph({ text:c.summary, spacing:{ before:120 } }),
+    H('Key metrics'),
+    table([['Metric','Value'], ['Live pipeline', fmtMoney(c.metrics.total, c.currency)], ['Weighted pipeline', fmtMoney(c.metrics.weighted, c.currency)], ['At-risk value', fmtMoney(c.metrics.riskValue, c.currency)], ['Closed won', fmtMoney(c.metrics.won, c.currency)], ['Projects in scope', String(c.metrics.count)]]),
+    H('Findings'), ...c.findings.map(f => new Paragraph({ text:f, bullet:{ level:0 } })),
+    H('Project detail'),
+    table([['Project','Client','Stage','Value','Risk'], ...c.rows.map(r => [r.name, r.client, r.stage, fmtMoney(r.value, c.currency), r.risk ? 'At risk' : '—'])]),
+    H('Recommended actions'), ...c.actions.map((a, i) => new Paragraph({ text:`${i+1}. ${a}` })),
+    H('Provenance', HeadingLevel.HEADING_2),
+    new Paragraph({ children:[new TextRun({ text:`Built from ${c.rows.length} local project records. Request: "${c.prompt}".${c.aiWritten ? ' Narrative drafted by Claude; all figures computed locally.' : ''}`, color:'5A6684', size:18 })] })
+  ]}]});
+  return Packer.toBlob(doc);
+}
+async function buildXlsx(c) {
+  if (!window.XLSX) throw new Error('Spreadsheet writer did not load');
+  const X = window.XLSX, wb = X.utils.book_new();
+  const n = c.rows.length;
+  const proj = [['Project','Client','Stage','Value','Win probability','Weighted value','At risk']];
+  c.rows.forEach((r, i) => proj.push([r.name, r.client, r.stage, r.value, r.prob, { f:`D${i+2}*E${i+2}` }, r.risk ? 'Yes' : 'No']));
+  proj.push(['Total','','', { f:`SUM(D2:D${n+1})` }, '', { f:`SUM(F2:F${n+1})` }, { f:`COUNTIF(G2:G${n+1},"Yes")` }]);
+  const ws = X.utils.aoa_to_sheet(proj); ws['!cols'] = [{wch:30},{wch:20},{wch:14},{wch:14},{wch:15},{wch:16},{wch:9}];
+  const stage = [['Stage','Projects','Value','Win probability']];
+  STAGES.forEach((s, i) => stage.push([s, { f:`COUNTIF(Projects!C2:C${n+1},A${i+2})` }, { f:`SUMIF(Projects!C2:C${n+1},A${i+2},Projects!D2:D${n+1})` }, WIN[s]]));
+  const sum = [['KUBERA AI — ' + c.title], [c.scope + ' · ' + new Date(c.createdAt).toDateString()], [],
+    ['Live pipeline', c.metrics.total], ['Weighted pipeline', { f:`Projects!F${n+2}` }], ['At-risk value', c.metrics.riskValue], ['Projects', n], [], ['Summary', c.summary]];
+  const ws0 = X.utils.aoa_to_sheet(sum); ws0['!cols'] = [{wch:22},{wch:80}];
+  const act = [['#','Recommended action'], ...c.actions.map((a, i) => [i+1, a])];
+  const ws3 = X.utils.aoa_to_sheet(act); ws3['!cols'] = [{wch:4},{wch:100}];
+  X.utils.book_append_sheet(wb, ws0, 'Summary'); X.utils.book_append_sheet(wb, ws, 'Projects');
+  X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(stage), 'By stage'); X.utils.book_append_sheet(wb, ws3, 'Actions');
+  const out = X.write(wb, { bookType:'xlsx', type:'array' });
+  return new Blob([out], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+
+/* ---------- workforce runtime ---------- */
+const queue = []; let running = null;
+const load = {};
+const pick = kind => S.agents.filter(a => a.kind === kind).sort((a, b) => (load[a.id]||0) - (load[b.id]||0))[0];
+const pace = () => S.settings.speed === 'fast' ? 0.35 : 1;
+function wait(ms, m) { return new Promise((res, rej) => setTimeout(() => m.cancel ? rej(new Error('cancelled')) : res(), ms * pace())); }
+
+function createMission(text, opts = {}) {
+  text = text.trim(); if (!text) { toast('Describe the business goal first'); return null; }
+  const type = opts.type && opts.type !== 'auto' ? opts.type : detectType(text);
+  const clientIds = opts.client && opts.client !== 'auto' ? (opts.client === 'all' ? [] : [opts.client]) : detectClients(text);
+  const m = { id:uid('m'), text, title:titleFrom(text, type, clientIds), type, clientIds, status:'queued', createdAt:now(), updatedAt:now(),
+    ai:!!(S.settings.ai && AI), source:opts.source || 'manual', tasks:[], handoffs:[], reportId:null };
+  S.missions.unshift(m); log('queue_mission', 'neutral', `Mission queued: "${text}"`, m.id); save();
+  queue.push(m.id); pump(); refresh(); return m;
+}
+function pump() { if (running || !queue.length) return; const id = queue.shift(); const m = S.missions.find(x => x.id === id); if (!m || m.status !== 'queued') return pump(); running = id; runMission(m).finally(() => { running = null; save(); refresh(); pump(); }); }
+
+async function runMission(m) {
+  m.status = 'running'; m.updatedAt = now(); m.cancel = false;
+  const mk = (key, kind, title) => { const a = pick(kind); return { key, agentId:a.id, title, status:'pending', summary:'' }; };
+  m.tasks = [ mk('manager','manager','Plan a bounded delivery team') ];
+  refresh();
+  const T = k => m.tasks.find(t => t.key === k);
+  const start = t => { t.status = 'running'; load[t.agentId] = (load[t.agentId]||0) + 1; refresh(); };
+  const end = (t, st, summary) => { t.status = st; t.summary = summary; load[t.agentId] = Math.max(0, (load[t.agentId]||1) - 1); m.updatedAt = now(); save(); refresh(); };
+  const scopeIds = m.clientIds.length ? m.clientIds : S.clients.map(c => c.id);
+  const projects = S.projects.filter(p => scopeIds.includes(p.clientId));
+  try {
+    const mg = T('manager'); start(mg); await wait(900, m);
+    if (!projects.length) { end(mg, 'failed', 'No project records match this scope. Add projects or widen the client filter.'); throw new Error('empty-scope'); }
+    m.tasks.push(mk('market','market','Assess opportunity and risk'), mk('ops','ops','Prepare pipeline metrics'),
+      mk('doc','doc', { pptx:'Create board deck', docx:'Write account report', xlsx:'Build pipeline workbook' }[m.type]), mk('review','review','Validate artifact'));
+    const names = m.tasks.slice(1).map(t => agent(t.agentId).name);
+    end(mg, 'succeeded', `Deployed ${names.join(', ')}. Recursive spawning disabled; team size fixed at 4.`);
+    log('deploy_team', 'neutral', `${agent(mg.agentId).name} deployed ${names.join(', ')} for "${m.text}".`, m.id);
+
+    const mt = T('market'), ot = T('ops'); start(mt); start(ot);
+    log('query_records', 'neutral', `${agent(mt.agentId).name} and ${agent(ot.agentId).name} read ${projects.length} project records (${scopeIds.length} client${scopeIds.length>1?'s':''}).`, m.id);
+    let aiOut = null;
+    const marketJob = (async () => {
+      if (m.ai && AI) {
+        try {
+          const k = metricsFor(projects);
+          const data = { scope: m.clientIds.length ? m.clientIds.map(clientName) : 'All clients', currency:S.settings.currency, request:m.text,
+            totals:{ live:k.total, weighted:Math.round(k.weighted), atRisk:k.riskValue, won:k.won },
+            projects: projects.map(p => ({ name:p.name, client:clientName(p.clientId), stage:p.stage, value:p.value, atRisk:p.risk })) };
+          aiOut = await AI.json(`You are Maya, a market analyst inside KUBERA AI. Using ONLY the JSON data below, write narrative for a ${m.type.toUpperCase()} deliverable. Do not invent numbers; quote figures exactly as given (format money in ${S.settings.currency}). Return JSON: {"headline": string under 90 chars, "summary": 2-3 sentences, "findings": [3 short strings], "actions": [3 short imperative strings]}.\n\nDATA:\n${JSON.stringify(data)}`, { modelTier:'default' });
+          if (!aiOut || !Array.isArray(aiOut.findings)) aiOut = null;
+        } catch (e) { aiOut = null; log('ai_fallback', 'warn', `Claude narrative unavailable (${e?.code || 'error'}); Maya used the deterministic analyst.`, m.id); }
+      }
+      await wait(1400, m);
+      const k = metricsFor(projects);
+      end(mt, 'succeeded', aiOut ? `Claude drafted ${aiOut.findings.length} findings from ${projects.length} records.` : `Flagged ${k.risk.length} at-risk project${k.risk.length===1?'':'s'} and ${Math.min(3, k.open.length)} themes.`);
+      m.handoffs.push({ type:'market_analysis', from:agent(mt.agentId).name, sources:projects.length, status:'accepted' });
+    })();
+    const opsJob = (async () => {
+      await wait(1100, m); const k = metricsFor(projects);
+      end(ot, 'succeeded', `Reconciled ${money(k.total)} live, ${money(k.weighted)} weighted across ${projects.length} projects.`);
+      m.handoffs.push({ type:'pipeline_metrics', from:agent(ot.agentId).name, sources:projects.length, status:'accepted' }); refresh();
+    })();
+    await Promise.all([marketJob, opsJob]);
+
+    const dt = T('doc'); start(dt);
+    log('consume_handoff', 'info', `${agent(dt.agentId).name} consumed market_analysis and pipeline_metrics handoffs.`, m.id);
+    m.updatedAt = now();
+    const content = buildContent(S, m, aiOut);
+    const blob = await buildFile(m.type, content);
+    await wait(900, m);
+    const rep = { id:uid('r'), missionId:m.id, name:fileName(m.title, m.type), type:m.type, createdAt:now(), size:blob.size, producer:agent(dt.agentId).name,
+      approval:'pending', feedback:'', content, outline:outlineFor(m.type, content), checks:null, sources:content.sourceIds };
+    end(dt, 'succeeded', `Wrote ${rep.name} (${bytes(blob.size)}).`);
+    log('create_file', 'info', `${agent(dt.agentId).name} wrote ${rep.name} to the Report Center.`, m.id);
+
+    const rv = T('review'); start(rv); await wait(800, m);
+    const part = blob.slice(0, 2); const head = new Uint8Array(part.arrayBuffer ? await part.arrayBuffer() : await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsArrayBuffer(part); }));
+    const checks = [
+      { label:'Valid Office package (ZIP header)', ok: head[0] === 0x50 && head[1] === 0x4B },
+      { label:`File type matches request (.${m.type})`, ok: rep.name.endsWith('.' + m.type) },
+      { label:'File is non-empty', ok: blob.size > 2048 },
+      { label:`Provenance: ${projects.length} source records linked`, ok: projects.length > 0 }
+    ];
+    rep.checks = checks;
+    const passed = checks.filter(c => c.ok).length;
+    S.reports.unshift(rep); m.reportId = rep.id;
+    if (passed === checks.length) {
+      end(rv, 'approved', `${passed} of ${checks.length} checks passed. Sent to the approval queue.`);
+      m.status = 'done'; log('validate_output', 'success', `Sentinel validated ${rep.name}. Awaiting human approval.`, m.id);
+      toast(`${rep.name} is ready for approval`);
+    } else {
+      end(rv, 'blocked', `${passed} of ${checks.length} checks passed. Delivery blocked.`);
+      m.status = 'failed'; log('validate_output', 'danger', `Sentinel blocked ${rep.name}.`, m.id);
+    }
+  } catch (e) {
+    m.tasks.forEach(t => { if (t.status === 'running' || t.status === 'pending') { load[t.agentId] = Math.max(0,(load[t.agentId]||1)-1); t.status = m.cancel ? 'cancelled' : 'blocked'; } });
+    if (m.cancel) { m.status = 'cancelled'; log('cancel_mission', 'warn', `Mission cancelled: "${m.text}".`, m.id); }
+    else { m.status = 'failed'; log('mission_failed', 'danger', e.message === 'empty-scope' ? `Mission stopped: no records in scope for "${m.text}".` : `Mission failed: ${e.message}`, m.id); toast('Mission failed. See the audit log.'); }
+  }
+  m.updatedAt = now();
+}
+
+/* ---------- cron ---------- */
+function field(f, lo, hi) {
+  const out = new Set();
+  for (const part of f.split(',')) {
+    let [r, st] = part.split('/'); st = st ? +st : 1; let a, b;
+    if (r === '*') { a = lo; b = hi; } else if (r.includes('-')) { [a, b] = r.split('-').map(Number); } else { a = +r; b = st > 1 ? hi : a; }
+    if ([a, b, st].some(Number.isNaN) || a < lo || b > hi || st < 1) throw new Error('bad');
+    for (let i = a; i <= b; i += st) out.add(i);
+  }
+  return out;
+}
+function nextRun(cron, from = now()) {
+  try {
+    const p = cron.trim().split(/\s+/); if (p.length !== 5) return null;
+    const [mi, ho, dm, mo, dw] = [field(p[0],0,59), field(p[1],0,23), field(p[2],1,31), field(p[3],1,12), field(p[4],0,7)];
+    if (dw.has(7)) dw.add(0);
+    const dmAny = p[2] === '*', dwAny = p[4] === '*';
+    const d = new Date(from); d.setSeconds(0, 0); d.setMinutes(d.getMinutes() + 1);
+    for (let i = 0; i < 200000; i++) {
+      if (!mo.has(d.getMonth() + 1)) { d.setMonth(d.getMonth() + 1, 1); d.setHours(0, 0); continue; }
+      const dayOk = dmAny && dwAny ? true : dmAny ? dw.has(d.getDay()) : dwAny ? dm.has(d.getDate()) : (dm.has(d.getDate()) || dw.has(d.getDay()));
+      if (!dayOk) { d.setDate(d.getDate() + 1); d.setHours(0, 0); continue; }
+      if (!ho.has(d.getHours())) { d.setHours(d.getHours() + 1, 0); continue; }
+      if (!mi.has(d.getMinutes())) { d.setMinutes(d.getMinutes() + 1); continue; }
+      return d.getTime();
+    }
+  } catch (e) {}
+  return null;
+}
+function describeCron(c) {
+  const p = c.trim().split(/\s+/); if (p.length !== 5) return 'Invalid';
+  const t = /^\d+$/.test(p[0]) && /^\d+$/.test(p[1]) ? `${String(p[1]).padStart(2,'0')}:${String(p[0]).padStart(2,'0')}` : null;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  if (t && p[2] === '*' && p[3] === '*' && p[4] === '*') return `Daily at ${t}`;
+  if (t && p[2] === '*' && p[3] === '*' && /^[0-7]$/.test(p[4])) return `Every ${days[+p[4] % 7]} at ${t}`;
+  if (t && p[2] === '*' && p[3] === '*' && p[4] === '1-5') return `Weekdays at ${t}`;
+  if (t && /^\d+$/.test(p[2]) && p[3] === '*' && p[4] === '*') return `Monthly on day ${p[2]} at ${t}`;
+  return 'Custom schedule';
+}
+const fired = new Set(); const pageStart = now();
+setInterval(() => {
+  S.schedules.forEach(s => {
+    if (!s.enabled) return; const nr = nextRun(s.cron, Math.max(s.lastRun || 0, s.createdAt || 0, pageStart - 60000));
+    if (nr && nr <= now() && !fired.has(s.id + nr)) { fired.add(s.id + nr); s.lastRun = now(); log('schedule_fired', 'info', `Schedule fired: "${s.prompt}".`); createMission(s.prompt, { type:s.type, source:'schedule' }); }
+  });
+}, 20000);
+
+try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { S = null; }
+if (!S || S.version !== 2) { S = seed(); seedReport(S); }
+
+/* ---------- routing / chrome ---------- */
+const ROUTES = [
+  ['missions','Missions'], ['workforce','Workforce'], ['reports','Reports'], ['records','Records'], ['schedules','Schedules'], ['audit','Audit log'], ['workspace','Workspace']
+];
+let route = (location.hash || '').slice(1); if (!ROUTES.some(r => r[0] === route)) route = 'missions';
+window.addEventListener('hashchange', () => { const r = location.hash.slice(1); if (ROUTES.some(x => x[0] === r)) { route = r; render(); } });
+const go = r => { if (location.hash.slice(1) === r) { route = r; render(); } else location.hash = r; };
+
+function badges() {
+  return { reports: S.reports.filter(r => r.approval === 'pending').length, missions: S.missions.filter(m => m.status === 'running' || m.status === 'queued').length,
+    records: S.projects.length, schedules: S.schedules.filter(s => s.enabled).length };
+}
+function chrome() {
+  const b = badges();
+  $('#nav').innerHTML = ROUTES.map(([id, label]) => `<a href="#${id}" ${route===id?'aria-current="page"':''}><span class="lbl">${ico(id)}${label}</span>${b[id] ? `<span class="badge ${id==='reports'?'hot':''}">${b[id]}<span class="vh"> ${id==='reports'?'awaiting approval':id==='missions'?'active':'items'}</span></span>` : ''}</a>`).join('');
+  const PRIMARY = [['missions','Missions'],['reports','Reports'],['records','Records'],['workforce','Team']];
+  const inMore = !PRIMARY.some(p => p[0] === route);
+  $('#bottomnav').innerHTML = PRIMARY.map(([id, l]) => `<a href="#${id}" ${route===id?'aria-current="page"':''}>${ico(id)}${l}${id==='reports'&&b.reports?`<span class="pip">${b.reports}<span class="vh"> awaiting approval</span></span>`:''}${id==='missions'&&b.missions?`<span class="pip" style="background:var(--accent)">${b.missions}<span class="vh"> active</span></span>`:''}</a>`).join('')
+    + `<button type="button" id="moreBtn" aria-haspopup="dialog" ${inMore?'aria-current="page"':''}>${ico('more')}${inMore ? ROUTES.find(r => r[0] === route)[1].split(' ')[0] : 'More'}</button>`;
+  const r = running && S.missions.find(m => m.id === running);
+  $('#engine').innerHTML = r ? `<span class="dot busy"></span>Running · ${esc(r.title)}` : `<span class="dot"></span>Workforce ready${queue.length ? ' · ' + queue.length + ' queued' : ''}`;
+  const th = S.settings.theme, tl = th === 'system' ? 'Auto' : th === 'dark' ? 'Dark' : 'Light';
+  $('#themeBtn').innerHTML = ico(th === 'system' ? 'auto' : th === 'dark' ? 'moon' : 'sun') + `<span class="theme-lbl">${tl}</span>`;
+  $('#themeBtn').setAttribute('aria-label', `Theme: ${tl}. Switch theme`);
+}
+function applyTheme() { const t = S.settings.theme; if (t === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
+
+/* ---------- views ---------- */
+const statusChip = s => ({ succeeded:'<span class="chip ok">Done</span>', approved:'<span class="chip ok">Approved</span>', running:'<span class="chip info">Working</span>',
+  pending:'<span class="chip">Waiting</span>', failed:'<span class="chip bad">Failed</span>', blocked:'<span class="chip bad">Blocked</span>', cancelled:'<span class="chip warn">Cancelled</span>',
+  done:'<span class="chip ok">Delivered</span>', queued:'<span class="chip">Queued</span>' }[s] || `<span class="chip">${esc(s)}</span>`);
+const approvalChip = a => a === 'approved' ? '<span class="chip ok">Approved</span>' : a === 'rejected' ? '<span class="chip bad">Rejected</span>' : '<span class="chip warn">Needs approval</span>';
+const av = a => `<span class="avatar" style="background:${a.color}">${esc(initials(a.name))}</span>`;
+
+function kpiHTML() {
+  const k = metricsFor(S.projects);
+  return `<div class="kpis">
+    <div class="kpi"><span class="label">Live pipeline</span><b class="gold">${money(k.total, true)}</b><small>${k.count} projects · ${S.clients.length} clients</small></div>
+    <div class="kpi"><span class="label">Weighted</span><b>${money(k.weighted, true)}</b><small>By stage win probability</small></div>
+    <div class="kpi"><span class="label">At risk</span><b style="color:var(--bad)">${money(k.riskValue, true)}</b><small>${k.risk.length} open project${k.risk.length===1?'':'s'} flagged</small></div>
+    <div class="kpi"><span class="label">Awaiting approval</span><b>${S.reports.filter(r=>r.approval==='pending').length}</b><small>${S.reports.length} files in Report Center</small></div>
+  </div>`;
+}
+function graphHTML(m) {
+  if (!m) return `<div class="empty">No mission yet. Describe a goal above and press Run mission.</div>`;
+  const T = k => m.tasks.find(t => t.key === k);
+  const node = t => { if (!t) return `<div class="node"><p>Waiting for the manager's plan…</p></div>`; const a = agent(t.agentId);
+    return `<div class="node ${t.status}"><div class="node-top"><div class="who">${av(a)}<div><b>${esc(a.name)}</b><small>${esc(a.role)}</small></div></div>${statusChip(t.status)}</div><p><b style="color:var(--fg);font-weight:500">${esc(t.title)}</b><br>${esc(t.summary || (t.status==='running' ? 'Working…' : 'Queued behind its dependencies.'))}</p></div>`; };
+  const done = m.tasks.filter(t => ['succeeded','approved'].includes(t.status)).length;
+  const pct = m.status === 'done' ? 100 : Math.round(done / 5 * 100);
+  const rep = m.reportId && S.reports.find(r => r.id === m.reportId);
+  return `<div class="panel-head"><div style="min-width:0"><span class="label">${m.source==='schedule'?'Scheduled mission':'Mission'} · ${esc(when(m.createdAt))}${m.ai?' · Claude narrative':''}</span><h2>${esc(m.title)}</h2><p class="muted" style="font-size:.88rem">“${esc(m.text)}”</p></div>
+    <div class="row">${statusChip(m.status)} <span class="type ${m.type}">${m.type}</span>${m.status==='running'||m.status==='queued'?`<button class="btn sm danger" data-act="cancel" data-id="${m.id}" type="button">Cancel</button>`:''}${rep?`<button class="btn sm" data-act="preview" data-id="${rep.id}" type="button">Open report</button>`:''}</div></div>
+    <div class="progress" style="margin-bottom:14px"><i style="width:${pct}%"></i></div>
+    <div class="graph">
+      <div class="col">${node(T('manager'))}</div><div class="arrow">→</div>
+      <div class="col">${node(T('market'))}${node(T('ops'))}</div><div class="arrow">→</div>
+      <div class="col">${node(T('doc'))}</div><div class="arrow">→</div>
+      <div class="col">${node(T('review'))}</div>
+    </div>
+    <div class="row" style="margin-top:14px"><span class="label">Handoffs</span><div class="handoffs">${m.handoffs.length ? m.handoffs.map(h => `<span class="handoff ${h.status}">${esc(h.type)} · ${esc(h.from)} · ${h.sources} src</span>`).join('') : '<span class="muted" style="font-size:.82rem">None yet</span>'}</div></div>`;
+}
+function historyHTML() {
+  if (!S.missions.length) return `<div class="empty">Missions you run appear here.</div>`;
+  return `<div class="list">${S.missions.slice(0, 12).map(m => `<div class="item"><span class="type ${m.type}">${m.type}</span><div class="body"><div class="title">${esc(m.title)}</div><div class="sub">${esc(ago(m.createdAt))} · ${m.source==='schedule'?'scheduled':'manual'}</div></div>${statusChip(m.status)}<button class="btn sm ghost" data-act="focus" data-id="${m.id}" type="button">View</button></div>`).join('')}</div>`;
+}
+function stageBars(projects) {
+  const k = metricsFor(projects), max = Math.max(1, ...k.byStage.map(b => b.value));
+  return `<div class="bars" role="img" aria-label="Pipeline by stage: ${k.byStage.map(b => b.stage + ' ' + money(b.value)).join(', ')}">${k.byStage.map(b => `<div class="bar-row"><span>${b.stage}</span><div class="bar-track"><i class="${b.stage==='Closed Won'?'w':''}" style="width:${(b.value/max*100).toFixed(1)}%"></i></div><span class="mono">${money(b.value, true)}</span></div>`).join('')}</div>`;
+}
+let focusId = null;
+const TEMPLATES = ['Build a Q3 pipeline deck for Acme Corp', 'Write an account report for Northstar Health', 'Export a pipeline workbook for all clients', 'Board deck on at-risk projects for Orion Logistics'];
+
+function viewMissions() {
+  const aiAvail = !!AI;
+  return `<div class="row"><div class="spacer"><span class="label">File first, chat second</span><h1>What should the workforce deliver?</h1></div></div>
+  ${kpiHTML()}
+  <section class="panel composer">
+    <form id="mForm" class="col" style="gap:12px">
+      <label class="field"><span>Business goal</span><textarea id="mText" rows="3" placeholder="e.g. Build a Q3 pipeline deck for Acme Corp">${esc(draft)}</textarea></label><p class="muted" style="font-size:.8rem;margin-top:-6px">Name a client and a format (deck, report, workbook). KUBERA detects both.</p>
+      <div class="templates">${TEMPLATES.map(t => `<button type="button" class="tpl" data-tpl="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+      <div class="row">
+        <label class="field" style="width:150px"><span>Output</span><select id="mType"><option value="auto">Detect from goal</option><option value="pptx">PPTX deck</option><option value="docx">DOCX report</option><option value="xlsx">XLSX workbook</option></select></label>
+        <label class="field" style="width:190px"><span>Client scope</span><select id="mClient"><option value="auto">Detect from goal</option><option value="all">All clients</option>${S.clients.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label>
+        <div class="spacer"></div>
+        <label class="switch" title="${aiAvail?'Maya asks Claude to draft the narrative. Figures stay local.':'Claude is not available in this view'}"><input type="checkbox" id="aiToggle" ${S.settings.ai&&aiAvail?'checked':''} ${aiAvail?'':'disabled'}>Claude narrative</label>
+        <button class="btn primary" type="submit" id="runBtn">${ico('play')}Run mission</button>
+      </div>
+      <p class="ai-note">${aiAvail ? 'With Claude narrative on, Maya drafts findings with Claude. All figures are computed locally from your records.' : 'Running the deterministic local workforce. Claude narrative turns on when this page runs inside Claude.'}</p>
+    </form>
+  </section>
+  <section class="panel" id="live" aria-label="Current mission"></section>
+  <div class="grid2">
+    <section class="panel"><div class="panel-head"><h2>Recent missions</h2></div><div id="history"></div></section>
+    <section class="panel"><div class="panel-head"><h2>Pipeline by stage</h2><span class="muted" style="font-size:.8rem">Gold = closed won</span></div>${stageBars(S.projects)}</section>
+  </div>`;
+}
+function updMissions() {
+  const m = S.missions.find(x => x.id === focusId) || S.missions.find(x => x.id === running) || S.missions[0];
+  const live = $('#live'); if (live) live.innerHTML = graphHTML(m);
+  const h = $('#history'); if (h) h.innerHTML = historyHTML();
+  const k = $('.kpis'); if (k) k.outerHTML = kpiHTML();
+}
+
+function viewWorkforce() {
+  const done = {}; S.missions.forEach(m => m.tasks.forEach(t => { if (['succeeded','approved'].includes(t.status)) done[t.agentId] = (done[t.agentId]||0) + 1; }));
+  const cur = {}; const rm = running && S.missions.find(m => m.id === running); if (rm) rm.tasks.forEach(t => { if (t.status === 'running') cur[t.agentId] = t.title; });
+  const max = Math.max(1, ...Object.values(done));
+  return `<div><span class="label">Fixed pool · least-load assignment</span><h1>Workforce</h1></div>
+  <section class="panel"><div class="panel-head"><h2>Guardrails</h2><span class="chip ok">All enforced</span></div>
+    <div class="guard">
+      <div><i>${ico('check')}</i><span>One manager at a time. Missions queue behind the running one.</span></div>
+      <div><i>${ico('check')}</i><span>The manager plans; app code deploys. No agent can spawn another.</span></div>
+      <div><i>${ico('check')}</i><span>Agents get typed tools only. No shell, SQL, browser or file paths.</span></div>
+      <div><i>${ico('check')}</i><span>Figures come from local math. Claude may write narrative, never numbers.</span></div>
+      <div><i>${ico('check')}</i><span>Every file passes Sentinel's checks, then a human approval gate.</span></div>
+      <div><i>${ico('check')}</i><span>Record reads, handoffs and files are written to the audit log.</span></div>
+    </div></section>
+  <div class="agents">${S.agents.map(a => `<div class="agent">
+    <div class="node-top"><div class="who">${av(a)}<div><b>${esc(a.name)}</b><small>${esc(a.role)}</small></div></div>${cur[a.id] ? '<span class="chip info">Working</span>' : '<span class="chip">Idle</span>'}</div>
+    <p class="muted" style="font-size:.85rem">${esc(cur[a.id] ? 'Now: ' + cur[a.id] : a.capability)}</p>
+    <div class="tools">${a.tools.map(t => `<span class="tool">${esc(t)}</span>`).join('')}</div>
+    <div><div class="row" style="justify-content:space-between;font-size:.8rem"><span class="muted">Tasks completed</span><span class="mono">${done[a.id]||0}</span></div><div class="progress"><i style="width:${((done[a.id]||0)/max*100).toFixed(0)}%"></i></div></div>
+  </div>`).join('')}</div>`;
+}
+
+let repFilter = 'all';
+function viewReports() {
+  const list = S.reports.filter(r => repFilter === 'all' || (repFilter === 'pending' ? r.approval === 'pending' : r.type === repFilter));
+  const opt = (v, l) => `<button type="button" data-rf="${v}" aria-pressed="${repFilter===v}">${l}</button>`;
+  return `<div class="row"><div class="spacer"><span class="label">Traceable deliverables</span><h1>Report Center</h1></div>
+    <div class="seg">${opt('all','All')}${opt('pending','Needs approval')}${opt('pptx','PPTX')}${opt('docx','DOCX')}${opt('xlsx','XLSX')}</div></div>
+  ${!DL && window.claude ? '<p class="notice">Downloads are not available in this view. You can still preview, approve and reject files.</p>' : ''}
+  ${list.length ? `<div class="reports">${list.map(r => `<article class="report">
+    <div class="row" style="justify-content:space-between"><span class="type ${r.type}">${r.type}</span>${approvalChip(r.approval)}</div>
+    <div class="fname">${esc(r.name)}</div>
+    <div class="sub muted" style="font-size:.8rem">${esc(ago(r.createdAt))} · by ${esc(r.producer)}${r.size?' · '+bytes(r.size):''} · ${r.content.rows.length} source records${r.content.aiWritten?' · Claude narrative':''}</div>
+    <ol>${r.outline.slice(0,4).map(o => `<li>${esc(o)}</li>`).join('')}${r.outline.length>4?`<li>+${r.outline.length-4} more</li>`:''}</ol>
+    ${r.approval==='rejected'&&r.feedback?`<p class="notice warn">Rejected: ${esc(r.feedback)}</p>`:''}
+    <div class="row" style="margin-top:auto"><button class="btn sm primary" type="button" data-act="download" data-id="${r.id}">${ico('download')}Download</button><button class="btn sm" type="button" data-act="preview" data-id="${r.id}">${ico('eye')}Review</button>
+    <span class="spacer"></span><button class="btn sm ghost danger icon-btn" type="button" data-act="delrep" data-id="${r.id}" aria-label="Delete ${esc(r.name)}">${ico('trash')}</button></div>
+  </article>`).join('')}</div>` : `<div class="panel empty">No files match this filter. Run a mission to produce one.</div>`}`;
+}
+
+let recTab = 'projects', recSort = { k:'value', d:-1 }, recQ = '', recStage = 'all';
+function viewRecords() {
+  const tab = (v, l) => `<button type="button" data-rt="${v}" aria-pressed="${recTab===v}">${l}</button>`;
+  let body = '';
+  if (recTab === 'projects') {
+    let rows = S.projects.map(p => ({ ...p, client:clientName(p.clientId) }))
+      .filter(p => (recStage === 'all' || p.stage === recStage) && (!recQ || (p.name + ' ' + p.client).toLowerCase().includes(recQ.toLowerCase())));
+    rows.sort((a, b) => { const x = a[recSort.k], y = b[recSort.k]; return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * recSort.d; });
+    const th = (k, l, cls='') => `<th class="${cls}" aria-sort="${recSort.k===k?(recSort.d>0?'ascending':'descending'):'none'}"><button type="button" class="btn ghost sm" data-sort="${k}" style="padding:0;min-height:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit">${l}${recSort.k===k?(recSort.d>0?' ↑':' ↓'):''}</button></th>`;
+    body = `<div class="row"> <label class="vh" for="recQ">Search projects</label><input type="search" id="recQ" placeholder="Search projects or clients" value="${esc(recQ)}" style="max-width:280px"><label class="vh" for="recStage">Filter by stage</label><select id="recStage" style="width:auto"><option value="all">All stages</option>${STAGES.map(s => `<option ${recStage===s?'selected':''}>${s}</option>`).join('')}</select><span class="spacer"></span>
+      <button class="btn sm" type="button" data-act="import">${ico('upload')}Import CSV</button><button class="btn sm" type="button" data-act="export">${ico('download')}Export CSV</button><button class="btn sm primary" type="button" data-act="newproj">${ico('plus')}Add project</button></div>
+      <div class="table-wrap cards"><table><caption class="vh">Projects</caption><thead><tr>${th('name','Project')}${th('client','Client')}${th('stage','Stage')}${th('value','Value','r')}<th class="r">Weighted</th><th>Risk</th><th></th></tr></thead><tbody>
+      ${rows.map(p => `<tr><td class="primary">${esc(p.name)}</td><td data-label="Client">${esc(p.client)}</td><td data-label="Stage">${esc(p.stage)}</td><td class="r mono" data-label="Value">${money(p.value)}</td><td class="r mono muted" data-label="Weighted">${money(p.value*(WIN[p.stage]??0))}</td><td data-label="Risk">${p.risk?'<span class="chip bad">At risk</span>':'<span class="muted">None</span>'}</td><td class="r act"><button class="btn sm ghost" type="button" data-act="editproj" data-id="${p.id}" aria-label="Edit ${esc(p.name)}">Edit</button></td></tr>`).join('') || '<tr><td colspan="7" class="empty">No projects match.</td></tr>'}
+      </tbody></table></div><p class="muted" style="font-size:.8rem">${rows.length} of ${S.projects.length} projects · total ${money(rows.reduce((a,p)=>a+p.value,0))}</p>`;
+  } else {
+    body = `<div class="row"><span class="spacer"></span><button class="btn sm primary" type="button" data-act="newclient">${ico('plus')}Add client</button></div>
+      <div class="table-wrap cards"><table><caption class="vh">Clients</caption><thead><tr><th>Client</th><th>Industry</th><th>Status</th><th>Owner</th><th class="r">Projects</th><th class="r">Live pipeline</th><th></th></tr></thead><tbody>
+      ${S.clients.map(c => { const ps = S.projects.filter(p => p.clientId === c.id); return `<tr><td class="primary">${esc(c.name)}</td><td data-label="Industry">${esc(c.industry||'—')}</td><td data-label="Status"><span class="chip ${c.status==='active'?'ok':c.status==='prospect'?'info':''}">${esc(c.status)}</span></td><td data-label="Owner">${esc(c.owner||'—')}</td><td class="r mono" data-label="Projects">${ps.length}</td><td class="r mono" data-label="Live pipeline">${money(metricsFor(ps).total)}</td><td class="r act"><button class="btn sm ghost" type="button" data-act="editclient" data-id="${c.id}" aria-label="Edit ${esc(c.name)}">Edit</button></td></tr>`; }).join('')}
+      </tbody></table></div>`;
+  }
+  return `<div class="row"><div class="spacer"><span class="label">Local records are memory</span><h1>Business records</h1></div><div class="seg">${tab('projects','Projects')}${tab('clients','Clients')}</div></div><section class="col" style="gap:12px">${body}</section>`;
+}
+
+function viewSchedules() {
+  return `<div class="row"><div class="spacer"><span class="label">Runs while this page is open</span><h1>Schedules</h1></div><button class="btn primary" type="button" data-act="newsched">${ico('plus')}New schedule</button></div>
+  <section class="panel">${S.schedules.length ? `<div class="list">${S.schedules.map(s => { const nr = s.enabled ? nextRun(s.cron) : null; return `<div class="item">
+    <span class="type ${s.type}">${s.type}</span><div class="body"><div class="title">${esc(s.prompt)}</div><div class="sub"><span class="mono">${esc(s.cron)}</span> · ${esc(describeCron(s.cron))} · Next: ${s.enabled ? (nr ? esc(when(nr)) + ' (' + ago(nr) + ')' : 'invalid') : 'paused'} · Last: ${esc(s.lastRun ? ago(s.lastRun) : 'never')}</div></div>
+    <label class="switch"><input type="checkbox" data-act="togglesched" data-id="${s.id}" ${s.enabled?'checked':''} aria-label="Enable schedule"></label>
+    <button class="btn sm" type="button" data-act="runsched" data-id="${s.id}">${ico('play')}Run now</button><button class="btn sm ghost danger icon-btn" type="button" data-act="delsched" data-id="${s.id}" aria-label="Delete schedule">${ico('trash')}</button></div>`; }).join('')}</div>` : '<div class="empty">No schedules. Add one to produce a file on a cadence.</div>'}</section>
+  <p class="muted" style="font-size:.84rem">Times use this device's clock (${esc(Intl.DateTimeFormat().resolvedOptions().timeZone)}). A schedule that comes due starts the normal bounded mission and joins the queue.</p>`;
+}
+
+let audQ = '', audKind = 'all';
+function viewAudit() {
+  const kinds = [...new Set(S.activity.map(a => a.kind))].sort();
+  const list = S.activity.filter(a => (audKind === 'all' || a.kind === audKind) && (!audQ || a.text.toLowerCase().includes(audQ.toLowerCase())));
+  return `<div class="row"><div class="spacer"><span class="label">Who read what, who made what</span><h1>Audit log</h1></div><button class="btn sm" type="button" data-act="exportlog">Export JSON</button></div>
+  <div class="row"> <label class="vh" for="audQ">Search events</label><input type="search" id="audQ" placeholder="Search events" value="${esc(audQ)}" style="max-width:300px"><label class="vh" for="audKind">Event type</label><select id="audKind" style="width:auto"><option value="all">All event types</option>${kinds.map(k => `<option ${audKind===k?'selected':''}>${k}</option>`).join('')}</select><span class="muted" style="font-size:.84rem">${list.length} events</span></div>
+  <section class="panel"><div class="list feed">${list.slice(0, 200).map(a => `<div class="item"><span class="tone ${a.tone}"></span><div class="body"><div style="font-size:.9rem">${esc(a.text)}</div><div class="sub"><span class="mono">${esc(a.kind)}</span> · ${esc(when(a.at))}</div></div></div>`).join('') || '<div class="empty">No events match.</div>'}</div></section>`;
+}
+
+function viewWorkspace() {
+  const s = S.settings;
+  return `<div><span class="label">Preferences and data</span><h1>Workspace</h1></div>
+  <div class="grid2">
+    <section class="panel col" style="gap:14px"><h2>Preferences</h2>
+      <label class="field"><span>Currency</span><select id="setCur"><option ${s.currency==='USD'?'selected':''}>USD</option><option ${s.currency==='INR'?'selected':''}>INR</option><option ${s.currency==='EUR'?'selected':''}>EUR</option></select></label>
+      <label class="field"><span>Theme</span><select id="setTheme"><option value="system" ${s.theme==='system'?'selected':''}>Match device</option><option value="light" ${s.theme==='light'?'selected':''}>Light</option><option value="dark" ${s.theme==='dark'?'selected':''}>Dark</option></select></label>
+      <label class="field"><span>Mission pace</span><select id="setSpeed"><option value="normal" ${s.speed==='normal'?'selected':''}>Normal (easy to follow)</option><option value="fast" ${s.speed==='fast'?'selected':''}>Fast</option></select></label>
+      <label class="switch"><input type="checkbox" id="setAi" ${s.ai?'checked':''} ${AI?'':'disabled'}>Use Claude for analyst narrative ${AI?'':'<span class="muted">(not available in this view)</span>'}</label>
+    </section>
+    <section class="panel col" style="gap:14px"><h2>Data</h2>
+      <p class="muted" style="font-size:.88rem">Everything lives in this browser. Back it up as JSON or move it to another device by importing the file.</p>
+      <div class="row"><button class="btn" type="button" data-act="backup">Back up workspace</button><button class="btn" type="button" data-act="restore">Restore from backup</button></div>
+      <div class="row"><button class="btn danger" type="button" data-act="reset">Reset demo data</button></div>
+      <div class="checks">
+        <div><span class="mono">${S.clients.length}</span> clients · <span class="mono">${S.projects.length}</span> projects · <span class="mono">${S.reports.length}</span> files · <span class="mono">${S.activity.length}</span> audit events</div>
+      </div>
+    </section>
+  </div>
+  <section class="panel"><h2 style="margin-bottom:8px">About this build</h2><p class="muted" style="font-size:.9rem;max-width:70ch">A web edition of KUBERA AI. A manager agent deploys a fixed, capability-limited team; W-2 writes a real PPTX, DOCX or XLSX from your records; Sentinel validates the package; you approve or reject it. The desktop edition replaces browser storage with SQLite and runs the manager through a loopback OpenCode sidecar.</p></section>`;
+}
+
+/* ---------- render ---------- */
+let draft = '';
+function render() {
+  applyTheme(); chrome();
+  const v = { missions:viewMissions, workforce:viewWorkforce, reports:viewReports, records:viewRecords, schedules:viewSchedules, audit:viewAudit, workspace:viewWorkspace }[route];
+  $('#view').innerHTML = v(); if (route === 'missions') updMissions();
+}
+function refresh() {
+  chrome();
+  if (route === 'missions') updMissions();
+  else if (route === 'workforce' || (route === 'reports' && !$('#layer').innerHTML)) $('#view').innerHTML = (route === 'workforce' ? viewWorkforce : viewReports)();
+}
+
+/* ---------- modal ---------- */
+let lastFocus = null;
+function modal(html, onMount) {
+  if (!$('#layer').innerHTML) lastFocus = document.activeElement;
+  $('#layer').innerHTML = `<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  const sc = $('#scrim'), dlg = $('.modal', sc), h = $('h2', dlg);
+  if (h) { h.id = h.id || 'dlgTitle'; dlg.setAttribute('aria-labelledby', h.id); } else dlg.setAttribute('aria-label', 'Command menu');
+  sc.addEventListener('click', e => { if (e.target === sc) closeModal(); });
+  dlg.addEventListener('keydown', e => { if (e.key !== 'Tab') return; const f = $$('a[href],button:not([disabled]),input,select,textarea', dlg).filter(x => !x.closest('[hidden]')); if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length-1].focus(); } else if (!e.shiftKey && document.activeElement === f[f.length-1]) { e.preventDefault(); f[0].focus(); } });
+  onMount && onMount(dlg); clearErrOnInput(dlg);
+  const f = $('input:not([type=file]),select,textarea', dlg) || $('button,a[href]', dlg); f && f.focus();
+}
+const closeModal = () => { $('#layer').innerHTML = ''; if (lastFocus && document.contains(lastFocus)) lastFocus.focus(); lastFocus = null; };
+
+function previewReport(id) {
+  const r = S.reports.find(x => x.id === id); if (!r) return;
+  const c = r.content; const m = S.missions.find(x => x.id === r.missionId);
+  const trail = S.activity.filter(a => a.missionId === r.missionId).slice(0, 8);
+  modal(`<div class="row" style="justify-content:space-between"><span class="type ${r.type}">${r.type}</span>${approvalChip(r.approval)}</div>
+    <h2>${esc(c.title)}</h2><div class="fname mono" style="font-size:.8rem;word-break:break-all">${esc(r.name)}</div>
+    <p style="font-size:.95rem"><b>${esc(c.headline)}</b></p><p class="muted" style="font-size:.9rem">${esc(c.summary)}</p>
+    <div><span class="label">Contents</span><ol style="margin:6px 0 0;padding-left:20px;font-size:.88rem">${r.outline.map(o => `<li>${esc(o)}</li>`).join('')}</ol></div>
+    <div><span class="label">Findings</span><ul style="margin:6px 0 0;padding-left:20px;font-size:.88rem">${c.findings.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
+    <div><span class="label">Sentinel checks</span><div class="checks" style="margin-top:6px">${(r.checks || [{label:'Seeded demo file; checks run when you download', ok:true}]).map(k => `<div><span style="color:var(${k.ok?'--ok':'--bad'});display:inline-flex">${ico(k.ok?'check':'x')}</span><span><span class="vh">${k.ok?'Passed: ':'Failed: '}</span>${esc(k.label)}</span></div>`).join('')}</div></div>
+    <div><span class="label">Source records</span><p class="muted" style="font-size:.84rem;margin-top:4px">${c.rows.map(x => esc(x.name)).join(' · ')}</p></div>
+    ${trail.length ? `<div><span class="label">Mission trail</span><div class="list feed">${trail.map(a => `<div class="item"><span class="tone ${a.tone}"></span><div class="body" style="font-size:.84rem">${esc(a.text)}</div></div>`).join('')}</div></div>` : ''}
+    ${r.approval==='rejected'?`<p class="notice warn">Rejected: ${esc(r.feedback)}</p>`:''}
+    <div id="rejectBox" hidden><label class="field"><span>Why are you rejecting this file? (required)</span><textarea id="rejText" rows="2" placeholder="e.g. Use the September figures and add the Northstar renewal"></textarea></label></div>
+    <div class="row end"><button class="btn" type="button" id="mClose">Close</button><button class="btn" type="button" id="mDl">${ico('download')}Download</button>
+      ${r.approval!=='rejected'?'<button class="btn danger" type="button" id="mRej">Reject</button>':''}${r.approval!=='approved'?'<button class="btn primary" type="button" id="mApp">Approve</button>':''}
+      ${r.approval==='rejected'&&m?'<button class="btn primary" type="button" id="mRerun">Re-run with feedback</button>':''}</div>`, el => {
+    $('#mClose', el).onclick = closeModal;
+    $('#mDl', el).onclick = () => busy($('#mDl', el), 'Building…', () => downloadReport(r.id));
+    const app = $('#mApp', el); if (app) app.onclick = () => { r.approval = 'approved'; r.feedback = ''; log('approve_file', 'success', `File approved: ${r.name}.`, r.missionId); save(); closeModal(); refresh(); toast('Approved'); if (route==='reports') render(); };
+    const rej = $('#mRej', el); if (rej) rej.onclick = () => {
+      const box = $('#rejectBox', el); if (box.hidden) { box.hidden = false; $('#rejText', el).focus(); rej.textContent = 'Confirm rejection'; return; }
+      const fb = $('#rejText', el).value.trim(); if (fb.length < 5) { setErr($('#rejText', el), 'Add a reason of at least 5 characters so the next run can fix it.'); return; }
+      r.approval = 'rejected'; r.feedback = fb; log('reject_file', 'warn', `File rejected: ${r.name}. Feedback: ${fb}`, r.missionId); save(); closeModal(); refresh(); if (route==='reports') render(); toast('Rejected with feedback');
+    };
+    const rr = $('#mRerun', el); if (rr) rr.onclick = () => { closeModal(); createMission(`${m.text}. Reviewer feedback: ${r.feedback}`, { type:r.type, client: m.clientIds.length===1 ? m.clientIds[0] : 'all' }); go('missions'); };
+  });
+}
+async function downloadReport(id) {
+  const r = S.reports.find(x => x.id === id); if (!r) return;
+  try { const blob = await buildFile(r.type, r.content); if (!r.size) { r.size = blob.size; save(); } log('download_file', 'neutral', `Downloaded ${r.name}.`, r.missionId); await offerFile(r.name, blob); }
+  catch (e) { toast('Could not build the file: ' + e.message); }
+}
+
+function projectForm(p) {
+  const isNew = !p; p = p || { name:'', clientId:S.clients[0]?.id, stage:'Discovery', value:50000, risk:false };
+  modal(`<h2>${isNew?'Add project':'Edit project'}</h2><form class="form" id="pf">
+    <label class="field full"><span>Project name</span><input type="text" id="pfName" required value="${esc(p.name)}"></label>
+    <label class="field"><span>Client</span><select id="pfClient">${S.clients.map(c => `<option value="${c.id}" ${c.id===p.clientId?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label>
+    <label class="field"><span>Stage</span><select id="pfStage">${STAGES.map(s => `<option ${s===p.stage?'selected':''}>${s}</option>`).join('')}</select></label>
+    <label class="field"><span>Value (${S.settings.currency})</span><input type="number" id="pfValue" min="0" step="1000" required value="${p.value}"></label>
+    <label class="switch" style="align-self:end;padding-bottom:8px"><input type="checkbox" id="pfRisk" ${p.risk?'checked':''}>Flag as at risk</label>
+    <div class="row full">${isNew?'':'<button class="btn danger" type="button" id="pfDel">Delete</button>'}<span class="spacer"></span><button class="btn" type="button" id="pfCancel">Cancel</button><button class="btn primary" type="submit">${isNew?'Add project':'Save changes'}</button></div></form>`, el => {
+    $('#pfCancel', el).onclick = closeModal;
+    const del = $('#pfDel', el); if (del) del.onclick = () => { if (del.dataset.armed) { S.projects = S.projects.filter(x => x.id !== p.id); log('delete_project','warn',`Project deleted: ${p.name}.`); save(); closeModal(); render(); toast('Project deleted'); } else { del.dataset.armed = 1; del.textContent = 'Tap again to delete'; } };
+    $('#pf', el).onsubmit = e => { e.preventDefault();
+      const v = { name:$('#pfName', el).value.trim(), clientId:$('#pfClient', el).value, stage:$('#pfStage', el).value, value:Math.max(0, +$('#pfValue', el).value || 0), risk:$('#pfRisk', el).checked };
+      if (!v.name) { setErr($('#pfName', el), 'Enter a project name.'); return; }
+      if (!(+$('#pfValue', el).value >= 0) || $('#pfValue', el).value === '') { setErr($('#pfValue', el), 'Enter a value of 0 or more.'); return; }
+      if (isNew) { S.projects.push({ id:uid('p'), ...v }); log('create_project','info',`Project added: ${v.name} (${clientName(v.clientId)}, ${money(v.value)}).`); }
+      else { Object.assign(S.projects.find(x => x.id === p.id), v); log('update_project','info',`Project updated: ${v.name}.`); }
+      save(); closeModal(); render(); toast(isNew ? 'Project added' : 'Changes saved'); };
+  });
+}
+function clientForm(c) {
+  const isNew = !c; c = c || { name:'', industry:'', status:'active', owner:'' };
+  modal(`<h2>${isNew?'Add client':'Edit client'}</h2><form class="form" id="cf">
+    <label class="field full"><span>Client name</span><input type="text" id="cfName" required value="${esc(c.name)}"></label>
+    <label class="field"><span>Industry</span><input type="text" id="cfInd" value="${esc(c.industry)}"></label>
+    <label class="field"><span>Status</span><select id="cfStatus">${['active','prospect','paused'].map(s => `<option ${s===c.status?'selected':''}>${s}</option>`).join('')}</select></label>
+    <label class="field full"><span>Account owner</span><input type="text" id="cfOwner" value="${esc(c.owner)}"></label>
+    <div class="row full">${isNew?'':'<button class="btn danger" type="button" id="cfDel">Delete</button>'}<span class="spacer"></span><button class="btn" type="button" id="cfCancel">Cancel</button><button class="btn primary" type="submit">${isNew?'Add client':'Save changes'}</button></div></form>`, el => {
+    $('#cfCancel', el).onclick = closeModal;
+    const del = $('#cfDel', el); if (del) del.onclick = () => {
+      const n = S.projects.filter(p => p.clientId === c.id).length;
+      if (n) { del.textContent = `Has ${n} project${n>1?'s':''}`; del.disabled = true; toast(`Move or delete ${c.name}'s ${n} project${n>1?'s':''} first`); return; }
+      if (del.dataset.armed) { S.clients = S.clients.filter(x => x.id !== c.id); log('delete_client','warn',`Client deleted: ${c.name}.`); save(); closeModal(); render(); toast('Client deleted'); } else { del.dataset.armed = 1; del.textContent = 'Tap again to delete'; } };
+    $('#cf', el).onsubmit = e => { e.preventDefault();
+      const v = { name:$('#cfName', el).value.trim(), industry:$('#cfInd', el).value.trim(), status:$('#cfStatus', el).value, owner:$('#cfOwner', el).value.trim() };
+      if (!v.name) { setErr($('#cfName', el), 'Enter a client name.'); return; }
+      if (S.clients.some(x => x.name.toLowerCase() === v.name.toLowerCase() && x.id !== c.id)) { setErr($('#cfName', el), `${v.name} already exists. Use a different name.`); return; }
+      if (isNew) { S.clients.push({ id:uid('c'), ...v }); log('create_client','info',`Client added: ${v.name}.`); } else { Object.assign(S.clients.find(x => x.id === c.id), v); log('update_client','info',`Client updated: ${v.name}.`); }
+      save(); closeModal(); render(); toast(isNew ? 'Client added' : 'Changes saved'); };
+  });
+}
+function parseCSV(text) {
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) { const ch = text[i];
+    if (q) { if (ch === '"' && text[i+1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; }
+    else if (ch === '"') q = true; else if (ch === ',') { row.push(cur); cur = ''; } else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i+1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; } else cur += ch; }
+  if (cur || row.length) { row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim()));
+}
+const csvCell = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g,'""')}"` : String(v);
+function importForm() {
+  modal(`<h2>Import projects from CSV</h2><p class="muted" style="font-size:.88rem">Columns: <span class="mono">name, client, stage, value, risk</span>. Clients must already exist. The import is all-or-nothing: one bad row cancels it.</p>
+    <label class="field"><span>Choose a file</span><input type="file" id="csvFile" accept=".csv,text/csv"></label>
+    <label class="field"><span>Or paste CSV</span><textarea id="csvText" rows="6" class="mono" placeholder="name,client,stage,value,risk&#10;Data Lake Migration,Acme Corp,Proposal,150000,no"></textarea></label>
+    <div id="csvErr"></div>
+    <div class="row end"><button class="btn" type="button" id="csvCancel">Cancel</button><button class="btn primary" type="button" id="csvGo">Import</button></div>`, el => {
+    $('#csvCancel', el).onclick = closeModal;
+    $('#csvFile', el).onchange = e => { const f = e.target.files[0]; if (!f) return; const fr = new FileReader(); fr.onload = () => $('#csvText', el).value = fr.result; fr.readAsText(f); };
+    $('#csvGo', el).onclick = () => {
+      const rows = parseCSV($('#csvText', el).value); const errs = []; const add = [];
+      if (!rows.length) { $('#csvErr', el).innerHTML = '<p class="notice warn">Nothing to import yet.</p>'; return; }
+      const start = rows[0][0].trim().toLowerCase() === 'name' ? 1 : 0;
+      rows.slice(start).forEach((r, i) => { const line = i + start + 1; const [name, client, stage, value, risk] = r.map(x => (x || '').trim());
+        const c = S.clients.find(x => x.name.toLowerCase() === (client||'').toLowerCase()); const st = STAGES.find(s => s.toLowerCase() === (stage||'').toLowerCase());
+        if (!name) errs.push(`Line ${line}: project name is empty`); else if (!c) errs.push(`Line ${line}: client "${client}" not found`); else if (!st) errs.push(`Line ${line}: stage "${stage}" is not one of ${STAGES.join(', ')}`);
+        else if (!(+value >= 0) || value === '') errs.push(`Line ${line}: value "${value}" is not a number`);
+        else add.push({ id:uid('p'), name, clientId:c.id, stage:st, value:+value, risk:/^(y|yes|true|1)$/i.test(risk||'') }); });
+      if (errs.length) { $('#csvErr', el).innerHTML = `<div class="notice warn">${errs.slice(0,6).map(esc).join('<br>')}${errs.length>6?`<br>+${errs.length-6} more`:''}</div>`; return; }
+      S.projects.push(...add); log('import_projects','info',`Imported ${add.length} projects from CSV.`); save(); closeModal(); render(); toast(`Imported ${add.length} projects`);
+    };
+  });
+}
+function schedForm() {
+  modal(`<h2>New schedule</h2><form class="form" id="sf">
+    <label class="field full"><span>Mission</span><input type="text" id="sfPrompt" required placeholder="e.g. Build the monthly Northstar pipeline deck"></label>
+    <label class="field"><span>Output</span><select id="sfType"><option value="pptx">PPTX deck</option><option value="docx">DOCX report</option><option value="xlsx">XLSX workbook</option></select></label>
+    <label class="field"><span>Repeat</span><select id="sfPreset"><option value="0 9 * * 1-5">Weekdays 09:00</option><option value="30 8 * * 1">Mondays 08:30</option><option value="0 9 1 * *">1st of month 09:00</option><option value="0 18 * * 5">Fridays 18:00</option><option value="custom">Custom cron…</option></select></label>
+    <label class="field full" id="sfCronWrap" hidden><span>Cron (minute hour day month weekday)</span><input type="text" id="sfCron" class="mono" value="0 9 * * 1-5"></label>
+    <p class="full muted" id="sfNext" style="font-size:.85rem" aria-live="polite"></p>
+    <div class="row full end"><button class="btn" type="button" id="sfCancel">Cancel</button><button class="btn primary" type="submit">Create schedule</button></div></form>`, el => {
+    const cron = () => $('#sfPreset', el).value === 'custom' ? $('#sfCron', el).value : $('#sfPreset', el).value;
+    const upd = () => { const n = nextRun(cron()); $('#sfNext', el).textContent = n ? `${describeCron(cron())}. Next run ${when(n)}.` : 'That cron expression is not valid. Use five fields, e.g. 0 9 * * 1-5.'; };
+    $('#sfPreset', el).onchange = () => { $('#sfCronWrap', el).hidden = $('#sfPreset', el).value !== 'custom'; upd(); };
+    $('#sfCron', el).oninput = upd; upd();
+    $('#sfCancel', el).onclick = closeModal;
+    $('#sf', el).onsubmit = e => { e.preventDefault(); const p = $('#sfPrompt', el).value.trim(); const c = cron().trim();
+      if (!p) { setErr($('#sfPrompt', el), 'Describe what the workforce should deliver.'); return; } if (!nextRun(c)) { $('#sfCronWrap', el).hidden = false; $('#sfPreset', el).value = 'custom'; setErr($('#sfCron', el), 'Use five fields: minute hour day month weekday, e.g. 0 9 * * 1-5.'); return; }
+      S.schedules.push({ id:uid('s'), prompt:p, type:$('#sfType', el).value, cron:c, enabled:true, lastRun:null, createdAt:now() }); log('create_schedule','info',`Schedule created: "${p}" (${c}).`); save(); closeModal(); render(); toast('Schedule created'); };
+  });
+}
+
+function moreSheet() {
+  modal(`<h2 id="dlgTitle">More</h2><div class="list">${ROUTES.filter(r => ['schedules','audit','workspace'].includes(r[0])).map(([id, l]) => `<a class="cmd" href="#${id}" data-close ${route===id?'aria-selected="true"':''} style="text-decoration:none;color:inherit;justify-content:flex-start;gap:12px">${ico(id)}<span>${l}</span></a>`).join('')}</div>
+  <button class="btn" type="button" data-close>${ico('search')}Search and commands</button>`, el => { $$('[data-close]', el).forEach(a => a.addEventListener('click', () => { closeModal(); if (a.tagName === 'BUTTON') setTimeout(palette, 30); })); });
+}
+
+/* ---------- command palette ---------- */
+function palette() {
+  const cmds = [
+    ...ROUTES.map(([id, l]) => ({ l:'Go to ' + l, k:'Navigate', run:() => go(id) })),
+    ...TEMPLATES.map(t => ({ l:'Run: ' + t, k:'Mission', run:() => { createMission(t); go('missions'); } })),
+    { l:'Add project', k:'Records', run:() => { go('records'); setTimeout(() => projectForm(), 50); } },
+    { l:'Add client', k:'Records', run:() => { recTab = 'clients'; go('records'); setTimeout(() => clientForm(), 50); } },
+    { l:'Import projects from CSV', k:'Records', run:() => { go('records'); setTimeout(importForm, 50); } },
+    { l:'New schedule', k:'Schedules', run:() => { go('schedules'); setTimeout(schedForm, 50); } },
+    { l:'Switch theme', k:'Workspace', run:cycleTheme },
+    { l:'Back up workspace', k:'Workspace', run:backup },
+    ...S.reports.slice(0, 8).map(r => ({ l:'Open ' + r.name, k:'Report', run:() => { go('reports'); setTimeout(() => previewReport(r.id), 50); } }))
+  ];
+  let sel = 0, shown = cmds;
+  modal(`<input type="search" id="pq" placeholder="Type a command or a mission goal" aria-label="Command"><div id="pl" role="listbox"></div>`, el => {
+    el.classList.add('palette');
+    const draw = () => { const q = $('#pq', el).value.trim().toLowerCase();
+      shown = cmds.filter(c => c.l.toLowerCase().includes(q));
+      if (q.length > 8) shown.push({ l:`Run mission: "${$('#pq', el).value.trim()}"`, k:'New', run:() => { createMission($('#pq', el).value); go('missions'); } });
+      sel = Math.min(sel, Math.max(0, shown.length - 1));
+      $('#pl', el).innerHTML = shown.slice(0, 12).map((c, i) => `<div class="cmd" role="option" data-i="${i}" aria-selected="${i===sel}"><span>${esc(c.l)}</span><small>${esc(c.k)}</small></div>`).join('') || '<div class="empty">No matching command</div>'; };
+    const exec = i => { const c = shown[i]; if (!c) return; closeModal(); c.run(); };
+    $('#pq', el).oninput = () => { sel = 0; draw(); };
+    $('#pq', el).onkeydown = e => { if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, Math.min(shown.length, 12) - 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { sel = Math.max(0, sel - 1); draw(); e.preventDefault(); } else if (e.key === 'Enter') { exec(sel); e.preventDefault(); } };
+    $('#pl', el).onclick = e => { const c = e.target.closest('.cmd'); if (c) exec(+c.dataset.i); };
+    draw();
+  });
+}
+function cycleTheme() { const o = ['system','light','dark']; S.settings.theme = o[(o.indexOf(S.settings.theme) + 1) % 3]; save(); applyTheme(); chrome(); if (route === 'workspace') render(); }
+async function backup() { const { ...copy } = S; await offerFile(`kubera-workspace_${new Date().toISOString().slice(0,10)}.json`, new Blob([JSON.stringify(copy, null, 2)], { type:'application/json' })); }
+
+/* ---------- events ---------- */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); }
+  else if (e.key === 'Escape' && $('#layer').innerHTML) closeModal();
+});
+$('#paletteBtn').onclick = palette; document.addEventListener('click', e => { if (e.target.closest('#moreBtn')) moreSheet(); }); $('#paletteBtn2').onclick = palette; $('#themeBtn').onclick = cycleTheme;
+
+document.addEventListener('submit', e => {
+  if (e.target.id === 'mForm') { e.preventDefault();
+    if (!$('#mText').value.trim()) { setErr($('#mText'), 'Describe the business goal, or tap one of the examples below.'); return; }
+    setErr($('#mText'), null);
+    const m = createMission($('#mText').value, { type:$('#mType').value, client:$('#mClient').value });
+    if (m) { draft = ''; $('#mText').value = ''; focusId = m.id; updMissions(); const rb = $('#runBtn'); busy(rb, 'Deploying…', () => new Promise(r => setTimeout(r, 700))); }
+  }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'mText') draft = t.value;
+  if (t.id === 'recQ') { recQ = t.value; const pos = t.selectionStart; render(); const n = $('#recQ'); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.id === 'audQ') { audQ = t.value; const pos = t.selectionStart; render(); const n = $('#audQ'); n.focus(); n.setSelectionRange(pos, pos); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'recStage') { recStage = t.value; render(); }
+  if (t.id === 'audKind') { audKind = t.value; render(); }
+  if (t.id === 'aiToggle' || t.id === 'setAi') { S.settings.ai = t.checked; save(); }
+  if (t.id === 'setCur') { S.settings.currency = t.value; S.reports.forEach(r => { if (r.content) r.content.currency = t.value; }); save(); render(); toast('Currency set to ' + t.value); }
+  if (t.id === 'setTheme') { S.settings.theme = t.value; save(); render(); }
+  if (t.id === 'setSpeed') { S.settings.speed = t.value; save(); }
+  if (t.dataset.act === 'togglesched') { const s = S.schedules.find(x => x.id === t.dataset.id); s.enabled = t.checked; if (t.checked && !s.lastRun) s.createdAt = now(); log('toggle_schedule','neutral',`Schedule ${t.checked?'enabled':'paused'}: "${s.prompt}".`); save(); render(); }
+});
+document.addEventListener('click', e => {
+  const tpl = e.target.closest('[data-tpl]'); if (tpl) { draft = tpl.dataset.tpl; $('#mText').value = draft; $('#mText').focus(); return; }
+  const rf = e.target.closest('[data-rf]'); if (rf) { repFilter = rf.dataset.rf; render(); return; }
+  const rt = e.target.closest('[data-rt]'); if (rt) { recTab = rt.dataset.rt; render(); return; }
+  const so = e.target.closest('[data-sort]'); if (so) { const k = so.dataset.sort; recSort = recSort.k === k ? { k, d:-recSort.d } : { k, d: k === 'value' ? -1 : 1 }; render(); return; }
+  const b = e.target.closest('[data-act]'); if (!b || b.type === 'checkbox') return;
+  const id = b.dataset.id, act = b.dataset.act;
+  if (act === 'cancel') { const m = S.missions.find(x => x.id === id); if (!m) return; if (m.status === 'queued') { m.status = 'cancelled'; const qi = queue.indexOf(id); if (qi > -1) queue.splice(qi, 1); log('cancel_mission','warn',`Mission cancelled: "${m.text}".`, m.id); save(); } else m.cancel = true; refresh(); }
+  else if (act === 'focus') { focusId = id; updMissions(); $('#live')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  else if (act === 'preview') previewReport(id);
+  else if (act === 'download') busy(b, 'Building…', () => downloadReport(id));
+  else if (act === 'delrep') { if (b.dataset.armed) { const r = S.reports.find(x => x.id === id); S.reports = S.reports.filter(x => x.id !== id); log('delete_file','warn',`File deleted: ${r?.name}.`, r?.missionId); save(); render(); toast('File deleted'); } else { b.dataset.armed = 1; b.classList.remove('icon-btn'); b.innerHTML = ico('trash') + 'Confirm delete'; } }
+  else if (act === 'newproj') projectForm();
+  else if (act === 'editproj') projectForm(S.projects.find(p => p.id === id));
+  else if (act === 'newclient') clientForm();
+  else if (act === 'editclient') clientForm(S.clients.find(c => c.id === id));
+  else if (act === 'import') importForm();
+  else if (act === 'export') { const rows = [['name','client','stage','value','risk'], ...S.projects.map(p => [p.name, clientName(p.clientId), p.stage, p.value, p.risk?'yes':'no'])]; offerFile(`kubera-projects_${new Date().toISOString().slice(0,10)}.csv`, new Blob([rows.map(r => r.map(csvCell).join(',')).join('\n')], { type:'text/csv' })); }
+  else if (act === 'newsched') schedForm();
+  else if (act === 'runsched') { const s = S.schedules.find(x => x.id === id); s.lastRun = now(); createMission(s.prompt, { type:s.type, source:'schedule' }); save(); go('missions'); }
+  else if (act === 'delsched') { if (b.dataset.armed) { S.schedules = S.schedules.filter(x => x.id !== id); save(); render(); toast('Schedule deleted'); } else { b.dataset.armed = 1; b.classList.remove('icon-btn'); b.innerHTML = ico('trash') + 'Confirm'; } }
+  else if (act === 'exportlog') offerFile(`kubera-audit_${new Date().toISOString().slice(0,10)}.json`, new Blob([JSON.stringify(S.activity, null, 2)], { type:'application/json' }));
+  else if (act === 'backup') backup();
+  else if (act === 'restore') {
+    modal(`<h2>Restore from backup</h2><p class="muted" style="font-size:.88rem">This replaces everything in this browser with the backup file.</p><label class="field"><span>Backup file (.json)</span><input type="file" id="rsFile" accept=".json,application/json"></label><div class="row end"><button class="btn" type="button" id="rsCancel">Cancel</button></div>`, el => {
+      $('#rsCancel', el).onclick = closeModal;
+      $('#rsFile', el).onchange = ev => { const f = ev.target.files[0]; if (!f) return; const fr = new FileReader(); fr.onload = () => { try { const d = JSON.parse(fr.result); if (d.version !== 2 || !Array.isArray(d.projects)) throw 0; S = d; save(); closeModal(); render(); toast('Workspace restored'); } catch (x) { toast('That file is not a KUBERA workspace backup'); } }; fr.readAsText(f); };
+    });
+  }
+  else if (act === 'reset') { if (b.dataset.armed) { S = seed(); seedReport(S); queue.length = 0; save(); render(); toast('Demo data restored'); } else { b.dataset.armed = 1; b.textContent = 'Tap again to reset everything'; } }
+});
+
+render();
+setInterval(() => { if (route === 'missions' && !running) { const k = $('#history'); if (k) k.innerHTML = historyHTML(); } else if (route === 'schedules' && !$('#layer').innerHTML) render(); }, 30000);
+})();
+</script>
+
+</body>
+</html>
