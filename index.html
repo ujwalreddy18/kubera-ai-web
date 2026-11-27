@@ -224,6 +224,28 @@ tr:hover td{background:color-mix(in srgb,var(--surface-2) 55%,transparent)}
 .notice{font-size:.84rem;border-radius:10px;padding:10px 12px;background:var(--surface-2);color:var(--muted)}
 .notice.warn{background:var(--warn-weak);color:var(--warn)}
 
+/* auth */
+.auth{position:fixed;inset:0;z-index:70;background:var(--bg);overflow:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.auth-side{background:var(--surface-2);border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;gap:28px;padding-block:max(40px,env(safe-area-inset-top,0px)) 40px;padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:48px}
+.auth-side h1{font-size:2.3rem;max-width:16ch}
+.auth-side ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;max-width:44ch}
+.auth-side li{display:flex;gap:10px;align-items:flex-start;color:var(--muted)}
+.auth-side li .ico{color:var(--ok);margin-top:3px}
+.auth-main{display:grid;place-items:center;padding-block:max(40px,env(safe-area-inset-top,0px)) max(40px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.auth-card{width:min(400px,100%);display:flex;flex-direction:column;gap:16px}
+.auth-card form{display:flex;flex-direction:column;gap:14px}
+.auth-card .seg{display:grid;grid-template-columns:1fr 1fr}
+.auth-card .btn.primary{width:100%;min-height:var(--tap)}
+.pw{position:relative}
+.pw input{padding-right:64px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--accent);font-size:.8rem;font-weight:600;cursor:pointer;padding:6px 8px}
+.meter{height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.meter i{display:block;height:100%;transition:width .2s,background-color .2s}
+.user-chip{display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:1px solid var(--line)}
+.user-chip .avatar{background:var(--accent);color:var(--on-accent)}
+.user-chip b{display:block;font-size:.85rem;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-chip small{display:block;color:var(--muted);font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:860px){.auth{grid-template-columns:minmax(0,1fr)}.auth-side{display:none}}
 @media (max-width:1000px){.grid2{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:860px){
   .shell{grid-template-columns:minmax(0,1fr)}
@@ -286,13 +308,28 @@ tr:hover td{background:color-mix(in srgb,var(--surface-2) 55%,transparent)}
 <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></symbol>
 <symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.55"/></symbol>
 </defs></svg>
-<div class="shell">
+<div class="auth" id="auth" hidden>
+  <section class="auth-side" aria-hidden="true">
+    <div class="brand"><div class="coin">K</div><div><b>KUBERA AI</b><small>Business operations workspace</small></div></div>
+    <div class="col" style="display:flex;flex-direction:column;gap:18px">
+      <h1>State a goal. Get the file.</h1>
+      <ul>
+        <li><svg class="ico"><use href="#i-check"/></svg>A manager agent deploys a fixed team of four specialists.</li>
+        <li><svg class="ico"><use href="#i-check"/></svg>W-2 writes a real PPTX, DOCX or XLSX from your records.</li>
+        <li><svg class="ico"><use href="#i-check"/></svg>Sentinel validates it, then you approve or reject.</li>
+      </ul>
+    </div>
+    <p class="muted" style="font-size:.8rem">Each account keeps its own clients, projects, reports and audit log.</p>
+  </section>
+  <main class="auth-main"><div class="auth-card" id="authCard"></div></main>
+</div>
+<div class="shell" id="shell" hidden>
   <aside class="rail" aria-label="Main navigation">
     <div class="brand"><div class="coin">K</div><div><b>KUBERA AI</b><small>Business operations workspace</small></div></div>
     <nav class="nav" id="nav"></nav>
     <div class="rail-foot">
       <button class="btn sm" id="paletteBtn2" type="button"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>Command menu <kbd>Ctrl K</kbd></button>
-      <span class="muted">Local-first · browser storage</span>
+      <div class="user-chip" id="userChip"></div>
     </div>
   </aside>
   <div class="main">
@@ -320,7 +357,9 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid = p => p + '-' + Math.random().toString(36).slice(2, 9);
-const KEY = 'kubera.workspace.v2';
+let KEY = 'kubera.workspace.v2';
+const USERS_KEY = 'kubera.users.v1', SESSION_KEY = 'kubera.session.v1';
+let USER = null;
 const STAGES = ['Discovery','Proposal','Negotiation','Closed Won','Closed Lost'];
 const WIN = {Discovery:.2, Proposal:.4, Negotiation:.7, 'Closed Won':1, 'Closed Lost':0};
 const now = () => Date.now();
@@ -741,14 +780,101 @@ function describeCron(c) {
 }
 const fired = new Set(); const pageStart = now();
 setInterval(() => {
+  if (!S) return;
   S.schedules.forEach(s => {
     if (!s.enabled) return; const nr = nextRun(s.cron, Math.max(s.lastRun || 0, s.createdAt || 0, pageStart - 60000));
     if (nr && nr <= now() && !fired.has(s.id + nr)) { fired.add(s.id + nr); s.lastRun = now(); log('schedule_fired', 'info', `Schedule fired: "${s.prompt}".`); createMission(s.prompt, { type:s.type, source:'schedule' }); }
   });
 }, 20000);
 
-try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { S = null; }
-if (!S || S.version !== 2) { S = seed(); seedReport(S); }
+function loadWorkspace(u) {
+  USER = u; KEY = 'kubera.workspace.v2:' + u.email;
+  try { S = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { S = null; }
+  if (!S || S.version !== 2) {
+    let legacy = null; try { legacy = JSON.parse(localStorage.getItem('kubera.workspace.v2') || 'null'); } catch (e) {}
+    if (legacy && legacy.version === 2 && !Object.keys(readUsers()).some(k => k !== u.email)) { S = legacy; try { localStorage.removeItem('kubera.workspace.v2'); } catch (e) {} }
+    else { S = seed(); seedReport(S); }
+    save();
+  }
+}
+
+/* ---------- accounts (browser-local) ---------- */
+const readUsers = () => { try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}') || {}; } catch (e) { return {}; } };
+const writeUsers = u => { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); return true; } catch (e) { return false; } };
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+async function hashPw(pw, saltB64) {
+  const salt = saltB64 ? Uint8Array.from(atob(saltB64), c => c.charCodeAt(0)) : crypto.getRandomValues(new Uint8Array(16));
+  if (!crypto.subtle) throw new Error('This browser cannot hash passwords. Open the page over https or localhost.');
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', salt, iterations:150000, hash:'SHA-256' }, key, 256);
+  return { salt: b64(salt), hash: b64(bits) };
+}
+const emailOk = e => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+function pwScore(pw) { let s = 0; if (pw.length >= 8) s++; if (pw.length >= 12) s++; if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++; if (/\d/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++; return Math.min(4, s); }
+function startSession(u, remember) {
+  const sess = JSON.stringify({ email:u.email, at:now() });
+  try { (remember ? localStorage : sessionStorage).setItem(SESSION_KEY, sess); (remember ? sessionStorage : localStorage).removeItem(SESSION_KEY); } catch (e) {}
+  loadWorkspace(u); log('sign_in', 'neutral', `${u.name} signed in.`); save();
+  $('#auth').hidden = true; $('#shell').hidden = false; $('#bottomnav').hidden = false; render();
+}
+function signOut() {
+  if (S && USER) { log('sign_out', 'neutral', `${USER.name} signed out.`); save(); }
+  try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+  queue.length = 0; S = null; USER = null; closeModal(); showAuth('signin');
+}
+let authMode = 'signin';
+function showAuth(mode) {
+  authMode = mode || authMode;
+  $('#shell').hidden = true; $('#bottomnav').hidden = true; $('#auth').hidden = false;
+  const up = authMode === 'signup';
+  const pwField = (id, label, ac) => `<label class="field"><span>${label}</span><div class="pw"><input type="password" id="${id}" autocomplete="${ac}" required><button type="button" data-peek="${id}" aria-label="Show password">Show</button></div></label>`;
+  $('#authCard').innerHTML = `
+    <div class="brand mobile-brand" style="display:flex"><div class="coin">K</div><b>KUBERA AI</b></div>
+    <div><h1>${up ? 'Create your account' : 'Welcome back'}</h1><p class="muted" style="margin-top:6px">${up ? 'Start with a demo workspace you can edit or reset.' : 'Sign in to open your workspace.'}</p></div>
+    <div class="seg" role="tablist"><button type="button" role="tab" data-mode="signin" aria-selected="${!up}" aria-pressed="${!up}">Sign in</button><button type="button" role="tab" data-mode="signup" aria-selected="${up}" aria-pressed="${up}">Create account</button></div>
+    <form id="authForm" novalidate>
+      ${up ? '<label class="field"><span>Full name</span><input type="text" id="auName" autocomplete="name" required></label>' : ''}
+      <label class="field"><span>Email</span><input type="text" inputmode="email" id="auEmail" autocomplete="email" required></label>
+      ${pwField('auPw', 'Password', up ? 'new-password' : 'current-password')}
+      ${up ? '<div class="meter" aria-hidden="true"><i id="auMeter" style="width:0"></i></div><p class="muted" id="auHint" style="font-size:.78rem;margin-top:-8px">At least 8 characters with a number.</p>' + pwField('auPw2', 'Confirm password', 'new-password') : ''}
+      <label class="switch"><input type="checkbox" id="auRemember" checked>Keep me signed in on this device</label>
+      <button class="btn primary" type="submit" id="auGo">${up ? 'Create account' : 'Sign in'}</button>
+    </form>
+    <p class="notice" style="font-size:.78rem">Accounts are stored in this browser only. Passwords are hashed (PBKDF2), but there is no server, so use a password you don't use elsewhere.</p>`;
+  const card = $('#authCard'); clearErrOnInput(card);
+  $$('[data-mode]', card).forEach(b => b.onclick = () => showAuth(b.dataset.mode));
+  $$('[data-peek]', card).forEach(b => b.onclick = () => { const i = $('#' + b.dataset.peek); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.textContent = show ? 'Hide' : 'Show'; b.setAttribute('aria-label', (show ? 'Hide' : 'Show') + ' password'); });
+  const pw = $('#auPw'); if (up) pw.addEventListener('input', () => { const sc = pwScore(pw.value); const m = $('#auMeter'); m.style.width = (sc / 4 * 100) + '%'; m.style.background = ['var(--bad)','var(--bad)','var(--warn)','var(--ok)','var(--ok)'][sc]; $('#auHint').textContent = ['Too short','Weak','Fair','Strong','Very strong'][sc] + (pw.value.length < 8 ? ' · at least 8 characters' : ''); });
+  $('#authForm').onsubmit = e => { e.preventDefault(); const btn = $('#auGo'); busy(btn, up ? 'Creating…' : 'Signing in…', () => (up ? doSignUp() : doSignIn())); };
+  ($(up ? '#auName' : '#auEmail') || pw).focus();
+}
+async function doSignUp() {
+  $$('#authForm input').forEach(i => setErr(i, null));
+  const name = $('#auName').value.trim(), email = $('#auEmail').value.trim().toLowerCase(), pw = $('#auPw').value, pw2 = $('#auPw2').value;
+  if (name.length < 2) return setErr($('#auName'), 'Enter your name.');
+  if (!emailOk(email)) return setErr($('#auEmail'), 'Enter a valid email, like name@company.com.');
+  const users = readUsers();
+  if (users[email]) return setErr($('#auEmail'), 'An account with this email already exists. Sign in instead.');
+  if (pw.length < 8 || !/\d/.test(pw)) return setErr($('#auPw'), 'Use at least 8 characters, including a number.');
+  if (pw !== pw2) return setErr($('#auPw2'), "Passwords don't match.");
+  try {
+    const h = await hashPw(pw);
+    users[email] = { name, email, salt:h.salt, hash:h.hash, createdAt:now() };
+    if (!writeUsers(users)) return setErr($('#auEmail'), 'This browser blocks storage, so the account cannot be saved.');
+    toast('Account created'); startSession(users[email], $('#auRemember').checked);
+  } catch (e) { setErr($('#auPw'), e.message); }
+}
+async function doSignIn() {
+  $$('#authForm input').forEach(i => setErr(i, null));
+  const email = $('#auEmail').value.trim().toLowerCase(), pw = $('#auPw').value;
+  if (!emailOk(email)) return setErr($('#auEmail'), 'Enter the email you signed up with.');
+  if (!pw) return setErr($('#auPw'), 'Enter your password.');
+  const u = readUsers()[email];
+  try {
+    if (!u || (await hashPw(pw, u.salt)).hash !== u.hash) { await new Promise(r => setTimeout(r, 400)); return setErr($('#auPw'), 'Email or password is incorrect.'); }
+    startSession(u, $('#auRemember').checked);
+  } catch (e) { setErr($('#auPw'), e.message); }
+}
 
 /* ---------- routing / chrome ---------- */
 const ROUTES = [
@@ -763,6 +889,8 @@ function badges() {
     records: S.projects.length, schedules: S.schedules.filter(s => s.enabled).length };
 }
 function chrome() {
+  if (!S) return;
+  if (USER) $('#userChip').innerHTML = `<span class="avatar">${esc(initials(USER.name))}</span><div style="min-width:0;flex:1"><b>${esc(USER.name)}</b><small>${esc(USER.email)}</small></div><button class="btn sm ghost" type="button" data-act="signout">Sign out</button>`;
   const b = badges();
   $('#nav').innerHTML = ROUTES.map(([id, label]) => `<a href="#${id}" ${route===id?'aria-current="page"':''}><span class="lbl">${ico(id)}${label}</span>${b[id] ? `<span class="badge ${id==='reports'?'hot':''}">${b[id]}<span class="vh"> ${id==='reports'?'awaiting approval':id==='missions'?'active':'items'}</span></span>` : ''}</a>`).join('');
   const PRIMARY = [['missions','Missions'],['reports','Reports'],['records','Records'],['workforce','Team']];
@@ -775,7 +903,7 @@ function chrome() {
   $('#themeBtn').innerHTML = ico(th === 'system' ? 'auto' : th === 'dark' ? 'moon' : 'sun') + `<span class="theme-lbl">${tl}</span>`;
   $('#themeBtn').setAttribute('aria-label', `Theme: ${tl}. Switch theme`);
 }
-function applyTheme() { const t = S.settings.theme; if (t === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
+function applyTheme() { if (!S) return; const t = S.settings.theme; if (t === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
 
 /* ---------- views ---------- */
 const statusChip = s => ({ succeeded:'<span class="chip ok">Done</span>', approved:'<span class="chip ok">Approved</span>', running:'<span class="chip info">Working</span>',
@@ -960,11 +1088,13 @@ function viewWorkspace() {
 /* ---------- render ---------- */
 let draft = '';
 function render() {
+  if (!S) return;
   applyTheme(); chrome();
   const v = { missions:viewMissions, workforce:viewWorkforce, reports:viewReports, records:viewRecords, schedules:viewSchedules, audit:viewAudit, workspace:viewWorkspace }[route];
   $('#view').innerHTML = v(); if (route === 'missions') updMissions();
 }
 function refresh() {
+  if (!S) return;
   chrome();
   if (route === 'missions') updMissions();
   else if (route === 'workforce' || (route === 'reports' && !$('#layer').innerHTML)) $('#view').innerHTML = (route === 'workforce' ? viewWorkforce : viewReports)();
@@ -1112,7 +1242,8 @@ function schedForm() {
 
 function moreSheet() {
   modal(`<h2 id="dlgTitle">More</h2><div class="list">${ROUTES.filter(r => ['schedules','audit','workspace'].includes(r[0])).map(([id, l]) => `<a class="cmd" href="#${id}" data-close ${route===id?'aria-selected="true"':''} style="text-decoration:none;color:inherit;justify-content:flex-start;gap:12px">${ico(id)}<span>${l}</span></a>`).join('')}</div>
-  <button class="btn" type="button" data-close>${ico('search')}Search and commands</button>`, el => { $$('[data-close]', el).forEach(a => a.addEventListener('click', () => { closeModal(); if (a.tagName === 'BUTTON') setTimeout(palette, 30); })); });
+  <button class="btn" type="button" data-close>${ico('search')}Search and commands</button>
+  ${USER ? `<div class="user-chip"><span class="avatar">${esc(initials(USER.name))}</span><div style="min-width:0;flex:1"><b>${esc(USER.name)}</b><small>${esc(USER.email)}</small></div><button class="btn sm" type="button" data-act="signout">Sign out</button></div>` : ''}`, el => { $$('[data-close]', el).forEach(a => a.addEventListener('click', () => { closeModal(); if (a.tagName === 'BUTTON') setTimeout(palette, 30); })); });
 }
 
 /* ---------- command palette ---------- */
@@ -1126,6 +1257,7 @@ function palette() {
     { l:'New schedule', k:'Schedules', run:() => { go('schedules'); setTimeout(schedForm, 50); } },
     { l:'Switch theme', k:'Workspace', run:cycleTheme },
     { l:'Back up workspace', k:'Workspace', run:backup },
+    { l:'Sign out', k:'Account', run:signOut },
     ...S.reports.slice(0, 8).map(r => ({ l:'Open ' + r.name, k:'Report', run:() => { go('reports'); setTimeout(() => previewReport(r.id), 50); } }))
   ];
   let sel = 0, shown = cmds;
@@ -1206,11 +1338,16 @@ document.addEventListener('click', e => {
       $('#rsFile', el).onchange = ev => { const f = ev.target.files[0]; if (!f) return; const fr = new FileReader(); fr.onload = () => { try { const d = JSON.parse(fr.result); if (d.version !== 2 || !Array.isArray(d.projects)) throw 0; S = d; save(); closeModal(); render(); toast('Workspace restored'); } catch (x) { toast('That file is not a KUBERA workspace backup'); } }; fr.readAsText(f); };
     });
   }
+  else if (act === 'signout') signOut();
   else if (act === 'reset') { if (b.dataset.armed) { S = seed(); seedReport(S); queue.length = 0; save(); render(); toast('Demo data restored'); } else { b.dataset.armed = 1; b.textContent = 'Tap again to reset everything'; } }
 });
 
-render();
-setInterval(() => { if (route === 'missions' && !running) { const k = $('#history'); if (k) k.innerHTML = historyHTML(); } else if (route === 'schedules' && !$('#layer').innerHTML) render(); }, 30000);
+(function boot() {
+  let sess = null; try { sess = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null'); } catch (e) {}
+  const u = sess && readUsers()[sess.email];
+  if (u) { loadWorkspace(u); $('#shell').hidden = false; render(); } else showAuth(Object.keys(readUsers()).length ? 'signin' : 'signup');
+})();
+setInterval(() => { if (!S) return; if (route === 'missions' && !running) { const k = $('#history'); if (k) k.innerHTML = historyHTML(); } else if (route === 'schedules' && !$('#layer').innerHTML) render(); }, 30000);
 })();
 </script>
 

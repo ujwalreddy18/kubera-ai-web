@@ -29,6 +29,7 @@ To host it free, turn on **GitHub Pages** (Settings → Pages → Deploy from br
 - Activity / audit feed, settings, reset demo data
 
 **Added in this edition**
+- Sign in / create account: passwords hashed with PBKDF2, each account gets its own workspace, "keep me signed in" option, sign out from the sidebar or menu. Accounts live in the browser only (no server).
 - Real file generation in the browser: 6-slide PPTX with chart and table, DOCX account report, XLSX workbook with SUM / SUMIF formulas
 - Live task graph: Manager → Analysts → Document Worker → Reviewer, with handoffs and cancel
 - Sentinel checks (Office package header, file type, size, provenance) before a file reaches you
